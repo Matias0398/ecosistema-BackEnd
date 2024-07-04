@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,13 +30,12 @@ public class Usuario {
 	@NotBlank(message = "El email no puede estar en blanco")
 	@Email
 	private String email;
-	@Builder.Default
 	@NotNull
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	private String contrasena;
-	@NotBlank(message = "El rol no puede estar en blanco")
 	private String rol;
 	@NotBlank(message = "El telefono no puede estar en blanco")
-	private int telefono;
+	private String telefono;
+	
 }
