@@ -34,8 +34,8 @@ public class Usuario {
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	private String contrasena;
-	@NotBlank(message = "El rol no puede estar en blanco")
 	private String rol;
 	@NotBlank(message = "El telefono no puede estar en blanco")
-	private int telefono;
+	private String telefono;
+	
 }
