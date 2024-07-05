@@ -27,9 +27,6 @@ public class UsuarioControlador {
 	
 	@PostMapping
 	public ResponseEntity<String> guardarUsuario(@Valid@RequestBody Usuario usuario) {
-		 if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
-	            usuario.setRol("USER");
-	        }
 	        usuarioServicioImpl.guardar(usuario);
 	        return ResponseEntity.ok("Usuario creado con éxito");
 	    }
