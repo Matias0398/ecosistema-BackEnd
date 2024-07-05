@@ -22,7 +22,7 @@ public class Usuario {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	@NotBlank(message = "El nombre no puede estar en blanco")
 	private String nombre;
 	@NotBlank(message = "El apellido no puede estar en blanco")
