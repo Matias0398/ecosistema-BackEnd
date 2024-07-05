@@ -9,9 +9,9 @@ import com.semillero.ecosistema.entidad.Categoria;
 import com.semillero.ecosistema.repositorio.ICategoriaRepositorio;
 
 @Service
-public class CategoriaServicio {
+public class CategoriaServicioImpl {
 	@Autowired
-	ICategoriaRepositorio categoriaRepositorio;
+	private ICategoriaRepositorio categoriaRepositorio;
 	
 	public List<Categoria> getCategorias(){
 		return categoriaRepositorio.findAll();
