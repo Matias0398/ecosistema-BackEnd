@@ -22,7 +22,7 @@ public class UsuarioServicioImpl  {
 	}
 
 	@Transactional
-	public boolean desactivarUsuario(Integer id) {
+	public boolean desactivarUsuario(Long id) {
 		 Usuario usuario = buscarPorId(id);
 	        if (usuario != null) {
 	            usuario.setDeleted(true);
@@ -33,7 +33,7 @@ public class UsuarioServicioImpl  {
 	}
 	
 	@Transactional
-	public Usuario buscarPorId(Integer id) {
+	public Usuario buscarPorId(Long id) {
 		
 		Optional<Usuario> opc=usuarioRepositorio.findById(id);
 		return  opc.orElse(null);

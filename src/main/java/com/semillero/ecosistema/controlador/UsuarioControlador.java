@@ -32,7 +32,7 @@ public class UsuarioControlador {
 	    }
 	
 	@PutMapping("/desactivar/{id}")
-	public ResponseEntity<String> desactivarUsuario(@PathVariable Integer id){
+	public ResponseEntity<String> desactivarUsuario(@PathVariable Long id){
 		boolean desactivado = usuarioServicioImpl.desactivarUsuario(id);
 
         if (desactivado==true) {
