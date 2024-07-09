@@ -3,6 +3,7 @@ package com.semillero.ecosistema.servicio;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import com.semillero.ecosistema.entidad.Pais;
 import com.semillero.ecosistema.entidad.Provincia;
 import com.semillero.ecosistema.repositorio.IPaisRepositorio;
 import com.semillero.ecosistema.repositorio.IProvinciaRepositorio;
+
+import dto.PaisDto;
 
 @Service
 public class PaisProvinciaServiceImpl {
@@ -21,8 +24,17 @@ public class PaisProvinciaServiceImpl {
 	@Autowired
 	private IProvinciaRepositorio provinciaRepositorio;
 	
-	public List<Pais>mostrarTodo(){
-		return paisRepositorio.findAll();
+	public List<PaisDto> mostrarTodo() {
+        return paisRepositorio.findAll().stream()
+                .map(this::convertirAPaisDto)
+                .collect(Collectors.toList());
+    }
+	
+	private PaisDto convertirAPaisDto(Pais pais) {
+		PaisDto dto=new PaisDto();
+		dto.setId(pais.getId());
+		dto.setNombre(pais.getNombre());
+		return dto;
 	}
 	
 	public List<Provincia> mostrarProvinciasPorPaisId(Long paisId) {

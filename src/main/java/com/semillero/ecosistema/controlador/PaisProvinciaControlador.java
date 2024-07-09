@@ -15,6 +15,8 @@ import com.semillero.ecosistema.entidad.Pais;
 import com.semillero.ecosistema.entidad.Provincia;
 import com.semillero.ecosistema.servicio.PaisProvinciaServiceImpl;
 
+import dto.PaisDto;
+
 @RestController
 @RequestMapping("/ubicacion")
 @Validated
@@ -24,9 +26,9 @@ public class PaisProvinciaControlador {
 	private PaisProvinciaServiceImpl paisProvinciaServiceImpl;
 	
 	@GetMapping("/paises")
-	public ResponseEntity<List<Pais>>mostrarPaises(){
-		return ResponseEntity.ok(paisProvinciaServiceImpl.mostrarTodo());
-	}
+    public List<PaisDto> getAllPaises() {
+        return paisProvinciaServiceImpl.mostrarTodo();
+    }
 	
 	@GetMapping("/paises/{paisId}/provincias")
 	public ResponseEntity<?>mostrarProvinciasPorId(@PathVariable Long paisId){
