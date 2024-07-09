@@ -1,5 +1,7 @@
 package com.semillero.ecosistema.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -28,5 +30,6 @@ public class Provincia {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "pais_id")
+	@JsonBackReference
 	private Pais pais;
 }
