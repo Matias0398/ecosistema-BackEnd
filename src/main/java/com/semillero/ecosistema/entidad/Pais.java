@@ -32,5 +32,5 @@ public class Pais {
 	
 	@OneToMany(mappedBy = "pais", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
-	private List<Provincia> provincia;
+	private List<Provincia> provincias;
 }

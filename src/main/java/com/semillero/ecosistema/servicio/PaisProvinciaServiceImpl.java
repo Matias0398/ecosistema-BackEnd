@@ -27,6 +27,6 @@ public class PaisProvinciaServiceImpl {
 	
 	public List<Provincia> mostrarProvinciasPorPaisId(Long paisId) {
 	    Optional<Pais> opc = paisRepositorio.findById(paisId);
-	    return opc.map(Pais::getProvincia).orElse(Collections.emptyList());
+	    return opc.map(Pais::getProvincias).orElse(Collections.emptyList());
 	}
 }
