@@ -23,18 +23,25 @@ public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	@NotBlank(message = "El nombre no puede estar en blanco")
 	private String nombre;
+	
 	@NotBlank(message = "El apellido no puede estar en blanco")
 	private String apellido;
+	
 	@NotBlank(message = "El email no puede estar en blanco")
 	@Email
 	private String email;
+	
 	@NotNull
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
+	
 	private String contrasena;
+	
 	private String rol;
+	
 	@NotBlank(message = "El telefono no puede estar en blanco")
 	private String telefono;
 	
