@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.entidad;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -23,6 +24,12 @@ import lombok.Setter;
 @Getter
 public class Pais {
 
+	 public Pais(Long id, String nombre) {
+	        this.id = id;
+	        this.nombre = nombre;
+	        this.provincias = new ArrayList<>();
+	    }
+	 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

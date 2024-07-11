@@ -1,6 +1,7 @@
 package com.semillero.ecosistema.servicio;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,5 +16,10 @@ public class CategoriaServicioImpl {
 	
 	public List<Categoria> getCategorias(){
 		return categoriaRepositorio.findAll();
+	}
+	
+	public Categoria buscarPorId(Long id) {
+		Optional<Categoria> opc=categoriaRepositorio.findById(id);
+		return  opc.orElse(null);
 	}
 }
