@@ -37,8 +37,18 @@ public class PaisProvinciaServiceImpl {
 		return dto;
 	}
 	
+	public PaisDto obtenerPaisDtoPorId(Long paisId) throws Exception {
+	    Pais pais = paisRepositorio.findById(paisId).orElseThrow(() -> new Exception("País no encontrado"));
+	    return convertirAPaisDto(pais);
+	}
+	
 	public List<Provincia> mostrarProvinciasPorPaisId(Long paisId) {
 	    Optional<Pais> opc = paisRepositorio.findById(paisId);
 	    return opc.map(Pais::getProvincias).orElse(Collections.emptyList());
 	}
+	
+	public Provincia mostrarProvinciaPorId(Long paisId, Long provinciaId) {
+	    return provinciaRepositorio.findByIdAndPaisId(provinciaId, paisId).orElse(null);
+	}
+
 }
