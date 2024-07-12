@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.entidad;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
 
 	@Id
@@ -44,5 +46,7 @@ public class Usuario {
 	
 	@NotBlank(message = "El telefono no puede estar en blanco")
 	private String telefono;
+	
+	
 	
 }
