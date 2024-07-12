@@ -1,0 +1,41 @@
+package com.semillero.ecosistema.controlador;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.semillero.ecosistema.entidad.Proveedor;
+import com.semillero.ecosistema.servicio.ProveedorServicio;
+
+@RestController
+@RequestMapping("proveedores")
+public class ProveedorControlador {
+
+	@Autowired
+	private ProveedorServicio proveedorServicio;
+	
+	@PostMapping("/usuario/{usuarioId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
+	public ResponseEntity<?> crearProveedor(@PathVariable Long usuarioId,@PathVariable Long paisId,@PathVariable Long provinciaId,@PathVariable Long categoriaId,@RequestBody Proveedor proveedor) {
+		try {
+			Proveedor nuevoProveedor = proveedorServicio.crearProveedor(usuarioId, proveedor, paisId, provinciaId,categoriaId);
+            return ResponseEntity.ok(nuevoProveedor);	
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+	}
+	@PutMapping("/usuario/{usuarioId}/proveedor/{proveedorId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
+	public ResponseEntity<?> editarProveedor(@PathVariable Long usuarioId,@PathVariable Long proveedorId,@PathVariable Long paisId,@PathVariable Long provinciaId,@PathVariable Long categoriaId, @RequestBody Proveedor proveedorDetalles) {
+		try {
+			Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId, proveedorId, proveedorDetalles, paisId, provinciaId,categoriaId);
+            return ResponseEntity.ok(proveedorActualizado);
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+	}
+}

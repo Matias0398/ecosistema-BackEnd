@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.semillero.ecosistema.entidad.Pais;
 import com.semillero.ecosistema.entidad.Provincia;
 import com.semillero.ecosistema.servicio.PaisProvinciaServiceImpl;
 
