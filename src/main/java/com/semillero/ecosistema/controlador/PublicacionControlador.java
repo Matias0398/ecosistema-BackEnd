@@ -32,12 +32,13 @@ public class PublicacionControlador {
 	@PostMapping(value="/publicar/{userId}")
 	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId, @Valid @RequestBody Publicacion publicacion) {
 		Optional<Usuario> user = usuarioRepositorio.findById(userId);
-		   if(user.isPresent()){
+		
+		   if(user.isPresent() && user.get().getRol().toUpperCase().equals("ADMIN")){
 		        publicacion.setUsuarioCreador(user.get());
 		        publicacionServicioImpl.crearPublicacion(publicacion);
 		        return ResponseEntity.ok("Publicación creada con éxito");
-		    } 
-		   return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado");
+		    }
+		   return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado o con los permisos requeridos");
 	}
 	
 	@PutMapping(value="/editar-publicacion/{id}")
@@ -70,6 +71,7 @@ public class PublicacionControlador {
 	@GetMapping(value="/publicaciones/activas")
 	public ResponseEntity<List<Publicacion>> obtenerPublicacionesActivas() {
 		List<Publicacion> publicacionesActivas = publicacionServicioImpl.obtenerPublicacionesActivas();
+		
 		for(Publicacion publicacion : publicacionesActivas) {
 			publicacionServicioImpl.incrementarVisualizaciones(publicacion);
 		}
@@ -80,6 +82,7 @@ public class PublicacionControlador {
 	@GetMapping(value="buscar/{idPublicacion}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long idPublicacion) {
 		Optional<Publicacion> publicacion = publicacionServicioImpl.buscarPublicacionPorId(idPublicacion);
+		
 		   if(publicacion.isPresent()){
 		        return ResponseEntity.ok(publicacion.get());
 		    } 
@@ -88,7 +91,7 @@ public class PublicacionControlador {
 	}
 	
 	@PutMapping("/cambiar-estado/{id}")
-	public ResponseEntity<String> cambiarEstado(@PathVariable Long id){
+	public ResponseEntity<String> cambiarEstado(@PathVariable Long id) {
 		boolean success = publicacionServicioImpl.cambiarEstado(id);
 
         if (success==true) {

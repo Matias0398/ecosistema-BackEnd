@@ -26,7 +26,7 @@ public class PublicacionServicioImpl {
 		return publicacionRepositorio.findAll();
 	}
 	
-	public List<Publicacion> obtenerPublicacionesActivas(){
+	public List<Publicacion> obtenerPublicacionesActivas() {
 		return publicacionRepositorio.findAllByDeletedFalse();
 	}
 	
@@ -36,11 +36,13 @@ public class PublicacionServicioImpl {
 	
 	public void incrementarVisualizaciones(Publicacion publicacion) {
 			publicacion.setCantidadDeVisualizaciones(publicacion.getCantidadDeVisualizaciones() + 1);
+			
 			publicacionRepositorio.save(publicacion);
 	}
 	
 	public boolean cambiarEstado(Long id) {
 		Optional <Publicacion> opcPublicacion = buscarPublicacionPorId(id);
+		
 		if (opcPublicacion.isPresent()) {
 			Publicacion publicacion = opcPublicacion.get();
 			publicacion.setDeleted(!publicacion.isDeleted());
@@ -53,6 +55,7 @@ public class PublicacionServicioImpl {
 	
 	public boolean editarPublicacion(Long id, Publicacion publicacion) {
 		Optional <Publicacion> opcPublicacion = buscarPublicacionPorId(id);
+		
 		if(opcPublicacion.isPresent()) {
 			Publicacion publicacionBD = opcPublicacion.get();
 			publicacionBD.setTitulo(publicacion.getTitulo());
