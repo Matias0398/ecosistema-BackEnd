@@ -54,13 +54,13 @@ public class PublicacionControlador {
 	
 	@DeleteMapping(value="/borrar-publicacion/{id}")
 	public ResponseEntity<String> borrarPublicacion(@PathVariable Long id) {
-		boolean success = publicacionServicioImpl.cambiarEstado(id);
-
-        if (success) {
-            return ResponseEntity.ok("La publicacion se borró con éxito");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró una publicación con el id proporcionado");
-        }
+		boolean success = publicacionServicioImpl.borrarPublicacion(id);
+		
+		if (success) {
+			return ResponseEntity.ok("La publicación se borró con exito");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró una publicación con el id proporcionado");
+		}
 	}
 	
 	@GetMapping(value="/publicaciones")

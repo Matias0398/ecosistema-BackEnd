@@ -49,5 +49,6 @@ public class Publicacion {
 	@JoinColumn(name = "usuario.id")
 	private Usuario usuarioCreador;
 	
-	private int cantidadDeVisualizaciones;
+	@NotNull
+	private int cantidadDeVisualizaciones = 0;
 }

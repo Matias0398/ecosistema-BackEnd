@@ -2,6 +2,7 @@ package com.semillero.ecosistema.servicio;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.semillero.ecosistema.entidad.Publicacion;
 import com.semillero.ecosistema.repositorio.IPublicacionRepositorio;
+
+import io.micrometer.common.util.StringUtils;
 
 @Service
 @Transactional
@@ -58,13 +61,21 @@ public class PublicacionServicioImpl {
 		
 		if(opcPublicacion.isPresent()) {
 			Publicacion publicacionBD = opcPublicacion.get();
+			
+			
+			String nuevasImagenes = StringUtils.isNotBlank(publicacion.getImagenes())
+					? publicacion.getImagenes()
+					: publicacionBD.getImagenes();
+			
+			int nuevaCantVisualizaciones = !Objects.isNull(publicacion.getCantidadDeVisualizaciones())
+					? publicacion.getCantidadDeVisualizaciones()
+					: publicacionBD.getCantidadDeVisualizaciones();
+			
 			publicacionBD.setTitulo(publicacion.getTitulo());
 			publicacionBD.setDescripcion(publicacion.getDescripcion());
-			publicacionBD.setDeleted(publicacion.isDeleted());
-			publicacionBD.setFechaDeCreacion(publicacion.getFechaDeCreacion());
-			publicacionBD.setImagenes(publicacion.getImagenes());
-			publicacionBD.setUsuarioCreador(publicacion.getUsuarioCreador());
-			publicacionBD.setCantidadDeVisualizaciones(publicacion.getCantidadDeVisualizaciones());
+			publicacionBD.setDeleted(publicacion.isDeleted());	
+			publicacionBD.setImagenes(nuevasImagenes);
+			publicacionBD.setCantidadDeVisualizaciones(nuevaCantVisualizaciones);
 			
 			publicacionRepositorio.save(publicacionBD);
 			
@@ -73,9 +84,21 @@ public class PublicacionServicioImpl {
 		return false;
 	}
 	
-
 	
-
+	public boolean borrarPublicacion(Long id) {
+		Optional <Publicacion> opcPublicacion = buscarPublicacionPorId(id);
+		
+		if (opcPublicacion.isPresent()) {
+			Publicacion borrarPublicacion = opcPublicacion.get();
+			borrarPublicacion.setDeleted(true);
+			publicacionRepositorio.save(borrarPublicacion);
+			
+			return true;
+		}else {
+			return false;
+		}	
+		
+	}
 
 	
 	
