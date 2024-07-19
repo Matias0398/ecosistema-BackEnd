@@ -33,7 +33,7 @@ public class PublicacionControlador {
 	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId, @Valid @RequestBody Publicacion publicacion) {
 		Optional<Usuario> user = usuarioRepositorio.findById(userId);
 		
-		   if(user.isPresent() && user.get().getRol().toUpperCase().equals("ADMIN")){
+		   if(user.isPresent() && user.get().getRol().equals("ADMIN")){
 		        publicacion.setUsuarioCreador(user.get());
 		        publicacionServicioImpl.crearPublicacion(publicacion);
 		        return ResponseEntity.ok("Publicación creada con éxito");
