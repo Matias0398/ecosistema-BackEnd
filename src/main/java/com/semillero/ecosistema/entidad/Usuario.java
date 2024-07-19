@@ -2,6 +2,8 @@ package com.semillero.ecosistema.entidad;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +21,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Usuario {
+	public enum Rol {
+		Admin,
+		Usuario
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +46,8 @@ public class Usuario {
 	
 	private String contrasena;
 	
-	private String rol;
+	@Enumerated(EnumType.STRING)
+	private Rol rol;
 	
 	@NotBlank(message = "El telefono no puede estar en blanco")
 	private String telefono;

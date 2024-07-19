@@ -1,4 +1,4 @@
-package dto;
+package com.semillero.ecosistema.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PaisDto {
-
-	private Long id;
+public class AuthResponse {
 	
-	private String nombre;
+	private String jwtToken;
+	private String rol;
+
 }

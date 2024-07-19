@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.semillero.ecosistema.dto.PaisDto;
 import com.semillero.ecosistema.entidad.Categoria;
 import com.semillero.ecosistema.entidad.Pais;
 import com.semillero.ecosistema.entidad.Proveedor;
@@ -12,8 +13,6 @@ import com.semillero.ecosistema.entidad.Proveedor.EstadoProveedor;
 import com.semillero.ecosistema.entidad.Provincia;
 import com.semillero.ecosistema.entidad.Usuario;
 import com.semillero.ecosistema.repositorio.IProveedorRepositorio;
-
-import dto.PaisDto;
 
 @Service
 public class ProveedorServicio {

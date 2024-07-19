@@ -8,12 +8,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.semillero.ecosistema.dto.PaisDto;
 import com.semillero.ecosistema.entidad.Pais;
 import com.semillero.ecosistema.entidad.Provincia;
 import com.semillero.ecosistema.repositorio.IPaisRepositorio;
 import com.semillero.ecosistema.repositorio.IProvinciaRepositorio;
-
-import dto.PaisDto;
 
 @Service
 public class PaisProvinciaServiceImpl {
