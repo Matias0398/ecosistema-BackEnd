@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @AllArgsConstructor
@@ -47,6 +48,9 @@ public class Usuario {
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	
+	//private String contrasena;
+	
+
 	@Enumerated(EnumType.STRING)
 	private RolDeUsuario rol;
 	

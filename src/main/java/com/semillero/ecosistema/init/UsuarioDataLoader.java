@@ -1,4 +1,4 @@
-package init;
+package com.semillero.ecosistema.init;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

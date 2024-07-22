@@ -41,5 +41,5 @@ public class UsuarioControlador {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró el usuario con el id proporcionado");
         }
 	}
-	}
+}
 

@@ -38,4 +38,9 @@ public class UsuarioServicioImpl  {
 		Optional<Usuario> opc=usuarioRepositorio.findById(id);
 		return  opc.orElse(null);
 	}
+	
+	public Usuario authenticateUser(String email) {
+        Optional<Usuario> usuarioOpt = usuarioRepositorio.findByEmail(email);
+        return usuarioOpt.orElse(null);
+	}
 }
