@@ -17,14 +17,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private final UserDetailsService userDetailsService;
+	private final UserDetailsService userDetailsService;
     private final String secretKey = "fsdfs46151@fde"; // Debe coincidir con la clave secreta en JwtUtil
 
     public JwtAuthenticationFilter(UserDetailsService userDetailsService) {

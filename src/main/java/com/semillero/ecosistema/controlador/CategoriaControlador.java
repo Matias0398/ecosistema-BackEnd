@@ -14,6 +14,7 @@ public class CategoriaControlador {
 	@Autowired
 	private CategoriaServicioImpl categoriaServicioImpl;
 	
+	
 	@GetMapping(value="/categorias")
 	public ResponseEntity<List<Categoria>> getListaCategorias() {
 		return ResponseEntity.ok(categoriaServicioImpl.getCategorias());
