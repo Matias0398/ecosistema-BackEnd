@@ -1,40 +1,88 @@
 package com.semillero.ecosistema.controlador;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.semillero.ecosistema.dto.AuthResponse;
 import com.semillero.ecosistema.entidad.Usuario;
-import com.semillero.ecosistema.servicio.GoogleTokenVerifier;
 import com.semillero.ecosistema.servicio.UsuarioServicioImpl;
+import com.semillero.ecosistema.util.JwtUtil;
+
 
 @RestController
 @RequestMapping("/auth")
 public class AuthControlador {
 
     @Autowired
-    private GoogleTokenVerifier googleTokenVerifier;
-
-    @Autowired
     private UsuarioServicioImpl usuarioServicio;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateGoogleUser(@RequestBody String idToken) {
+    public ResponseEntity<?> authenticateGoogleUser(@RequestBody Map<String, String> request) {
         try {
-            Payload payload = googleTokenVerifier.verifyToken(idToken);
-            String email = payload.getEmail();
-            Usuario usuario = usuarioServicio.authenticateUser(email);
-            // Genera un JWT para el usuario autenticado si es necesario
-            return ResponseEntity.ok(usuario);
-        } catch (GeneralSecurityException | IOException e) {
-            return ResponseEntity.status(401).body("Invalid ID token");
+            String accessToken = request.get("accessToken");
+
+            if (accessToken == null) {
+                return ResponseEntity.badRequest().body("Missing access token");
+            }
+
+            // Realiza una solicitud a la API de Google para obtener la información del usuario
+            String userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + accessToken;
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(userInfoEndpoint, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                // Analiza la respuesta JSON para obtener el correo electrónico
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode userJsonNode = mapper.readTree(response.getBody());
+                String email = userJsonNode.get("email").asText();
+
+                // Autentica al usuario en tu sistema
+                Usuario usuario = usuarioServicio.authenticateUser(email);
+
+                if (usuario == null) {
+                    return ResponseEntity.status(401).body("Usuario no encontrado");
+                }
+
+                // Genera un JWT para el usuario autenticado
+                String jwt = jwtUtil.generateToken(usuario);
+                
+             // Crear la cookie
+                ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/")
+                        .maxAge(36000)  // Duración en segundos
+                        .build();
+                
+                AuthResponse authResponse = new AuthResponse(
+                        jwt,
+                        usuario.getNombre(),
+                        usuario.getEmail(),
+                        usuario.getRol().name()// Asumiendo que `getRoles()` devuelve una lista de enums
+                    );
+                
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                        .body(authResponse);
+            } else {
+                return ResponseEntity.status(response.getStatusCode()).body("Invalid access token");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid access token");
         }
     }
 }

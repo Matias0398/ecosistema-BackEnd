@@ -2,6 +2,7 @@ package com.semillero.ecosistema.entidad;
 
 import java.util.Date;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,13 +40,15 @@ public class Publicacion {
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	
+	
 	private Date fechaDeCreacion;
 	
 	private String imagenes;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usuario_id")
+	@JoinColumn(name = "usuario.id")
 	private Usuario usuarioCreador;
 	
-	private int cantidadDeVisualizaciones;
+	@NotNull
+	private int cantidadDeVisualizaciones = 0;
 }

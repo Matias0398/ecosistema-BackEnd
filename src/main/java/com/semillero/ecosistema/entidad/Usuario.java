@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.entidad;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,18 +15,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
-	public enum Rol {
-		Admin,
-		Usuario
-	}
 
+	public enum RolDeUsuario {
+		ADMIN,
+		USUARIO
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -44,12 +48,15 @@ public class Usuario {
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	
-	private String contrasena;
+	//private String contrasena;
 	
+
 	@Enumerated(EnumType.STRING)
-	private Rol rol;
+	private RolDeUsuario rol;
 	
 	@NotBlank(message = "El telefono no puede estar en blanco")
 	private String telefono;
+	
+	
 	
 }
