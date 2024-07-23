@@ -4,6 +4,7 @@ package com.semillero.ecosistema.controlador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,8 @@ public class UsuarioControlador {
 	        return ResponseEntity.ok("Usuario creado con éxito");
 	    }
 	
+
+    @PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/desactivar/{id}")
 	public ResponseEntity<String> desactivarUsuario(@PathVariable Long id){
 		boolean desactivado = usuarioServicioImpl.desactivarUsuario(id);
