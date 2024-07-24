@@ -40,6 +40,10 @@ public class ProveedorServicio {
 		
 		Usuario usuario = usuarioServicioImpl.buscarPorId(usuarioId);
 		
+		if(usuario==null) {
+			throw new Exception("El usuario no existe");
+		}
+		
 		PaisDto paisDto = paisProvinciaServiceImpl.obtenerPaisDtoPorId(paisId);
 		
 		Provincia provincia=paisProvinciaServiceImpl.mostrarProvinciaPorId(paisId, provinciaId);
@@ -95,4 +99,8 @@ public class ProveedorServicio {
 	public List<Proveedor>buscarPorNombre(String query){
 		return proveedorRepositorio.findByNombreContainingIgnoreCase(query);
 	}
+	
+	public List<Proveedor> buscarPorCategoriaId(Long categoriaId) {
+        return proveedorRepositorio.findByCategoriaId(categoriaId);
+    }
 }
