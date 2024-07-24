@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.semillero.ecosistema.entidad.Publicacion;
 import com.semillero.ecosistema.entidad.Usuario;
+import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
 import com.semillero.ecosistema.repositorio.IUsuarioRepositorio;
 import com.semillero.ecosistema.servicio.PublicacionServicioImpl;
 
@@ -29,11 +31,14 @@ public class PublicacionControlador {
 	@Autowired
 	private IUsuarioRepositorio usuarioRepositorio;
 	
+
+
+	@PreAuthorize("hasRole('ADMIN')")  
 	@PostMapping(value="/publicar/{userId}")
 	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId, @Valid @RequestBody Publicacion publicacion) {
 		Optional<Usuario> user = usuarioRepositorio.findById(userId);
 		
-		   if(user.isPresent() && user.get().getRol().equals("ADMIN")){
+		   if(user.isPresent() && user.get().getRol()==RolDeUsuario.ADMIN){
 		        publicacion.setUsuarioCreador(user.get());
 		        publicacionServicioImpl.crearPublicacion(publicacion);
 		        return ResponseEntity.ok("Publicación creada con éxito");
@@ -41,6 +46,7 @@ public class PublicacionControlador {
 		   return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado o con los permisos requeridos");
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(value="/editar-publicacion/{id}")
 	public ResponseEntity<String> editarPublicacion(@PathVariable Long id, @Valid @RequestBody Publicacion publicacion) {
 		boolean success = publicacionServicioImpl.editarPublicacion(id, publicacion);
@@ -52,6 +58,7 @@ public class PublicacionControlador {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping(value="/borrar-publicacion/{id}")
 	public ResponseEntity<String> borrarPublicacion(@PathVariable Long id) {
 		boolean success = publicacionServicioImpl.borrarPublicacion(id);
@@ -63,6 +70,7 @@ public class PublicacionControlador {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping(value="/publicaciones")
 	public ResponseEntity<List<Publicacion>> obtenerPublicaciones() {
 		return ResponseEntity.ok(publicacionServicioImpl.obtenerPublicaciones());

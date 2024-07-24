@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
     private final String secretKey = "fsdfs46151@fde"; // Debe coincidir con la clave secreta en JwtUtil
 
     public JwtAuthenticationFilter(UserDetailsService userDetailsService) {
@@ -33,10 +33,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
+        String token = null;
+        String cookieHeader = request.getHeader("Cookie");
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7); // Elimina "Bearer "
+        if (cookieHeader != null) {
+            String[] cookies = cookieHeader.split(";");
+            for (String cookie : cookies) {
+                if (cookie.trim().startsWith("jwt=")) {
+                    token = cookie.trim().substring(4);
+                    break;
+                }
+            }
+        }
+
+        if (token != null) {
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
@@ -55,11 +65,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (SignatureException e) {
-                // Token no válido: firma no coincide
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT signature");
                 return;
             } catch (Exception e) {
-                // Otros errores
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
                 return;
             }
@@ -67,4 +75,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 }
+

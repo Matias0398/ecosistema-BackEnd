@@ -14,18 +14,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Autowired
+    @Autowired
     private UserDetailsService userDetailsService;
 
-	@Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors().and() // Habilitar CORS usando la configuración proporcionada por CorsConfig
             .csrf().disable()
             .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll() // Permitir acceso a todos los endpoints sin autenticación
+                .requestMatchers("/auth/login","/auth/registro").permitAll() // Permitir acceso libre a estos endpoints
+                .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
+                .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**","/publicaciones").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
+                .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
+                .anyRequest().authenticated() // Asegura que todas las demás solicitudes estén autenticadas
             )
-            .oauth2Login().and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .addFilterBefore(new JwtAuthenticationFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
