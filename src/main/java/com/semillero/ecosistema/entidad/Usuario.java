@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @AllArgsConstructor
@@ -54,8 +53,7 @@ public class Usuario {
 	@Enumerated(EnumType.STRING)
 	private RolDeUsuario rol;
 	
-	@NotBlank(message = "El telefono no puede estar en blanco")
-	private String telefono;
+	//private String telefono;
 	
 	
 	
