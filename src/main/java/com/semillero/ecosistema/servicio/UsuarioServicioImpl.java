@@ -23,13 +23,17 @@ public class UsuarioServicioImpl  {
 
 	@Transactional
 	public boolean desactivarUsuario(Long id) {
-		 Usuario usuario = buscarPorId(id);
-	        if (usuario != null) {
-	            usuario.setDeleted(true);
-	            usuarioRepositorio.save(usuario);
-	            return true;
+	    Optional<Usuario> usuarioOpt = usuarioRepositorio.findById(id);
+	    if (usuarioOpt.isPresent()) {
+	        Usuario usuario = usuarioOpt.get();
+	        if (!usuario.isDeleted()) {
+	            return false; // Ya está desactivado
 	        }
-	        return false;
+	        usuario.setDeleted(false);
+	        usuarioRepositorio.save(usuario);
+	        return true;
+	    }
+	    return false;
 	}
 	
 	@Transactional
