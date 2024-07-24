@@ -23,9 +23,9 @@ public class SecurityConfig {
             .cors().and() // Habilitar CORS usando la configuración proporcionada por CorsConfig
             .csrf().disable()
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/usuarios", "/auth/login").permitAll() // Permitir acceso libre a estos endpoints
+                .requestMatchers("/auth/login","/auth/registro").permitAll() // Permitir acceso libre a estos endpoints
                 .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
-                .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
+                .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**","/publicaciones").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
                 .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
                 .anyRequest().authenticated() // Asegura que todas las demás solicitudes estén autenticadas
             )
