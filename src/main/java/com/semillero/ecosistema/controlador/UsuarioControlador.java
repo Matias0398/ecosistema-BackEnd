@@ -26,14 +26,6 @@ public class UsuarioControlador {
 	@Autowired
 	private UsuarioServicioImpl usuarioServicioImpl;
 	
-	@PostMapping
-	public ResponseEntity<String> guardarUsuario(@Valid@RequestBody Usuario usuario) {
-	        usuarioServicioImpl.guardar(usuario);
-	        return ResponseEntity.ok("Usuario creado con éxito");
-	    }
-	
-
-    @PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/desactivar/{id}")
 	public ResponseEntity<String> desactivarUsuario(@PathVariable Long id){
 		boolean desactivado = usuarioServicioImpl.desactivarUsuario(id);

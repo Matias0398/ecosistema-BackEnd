@@ -20,7 +20,7 @@ public class UsuarioDataLoader implements CommandLineRunner {
 		
 		private void loadUsuarioData() {
 			if (usuarioRepositorio.count() == 0) {
-				Usuario usuario1 = new Usuario(null, "Eco", "Sistema", "ecosistematt@gmail.com", false, RolDeUsuario.ADMIN, "1234567" );	
+				Usuario usuario1 = new Usuario(null, "Eco", "Sistema", "ecosistematt@gmail.com", false, RolDeUsuario.ADMIN );	
 				usuarioRepositorio.save(usuario1);
 			}
 			
