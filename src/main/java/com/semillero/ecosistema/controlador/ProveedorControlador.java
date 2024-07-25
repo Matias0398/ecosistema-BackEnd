@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ public class ProveedorControlador {
 	@Autowired
 	private ProveedorServicio proveedorServicio;
 	
+	@PreAuthorize("hasRole('USUARIO')")
 	@PostMapping("/usuario/{usuarioId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
 	public ResponseEntity<?> crearProveedor(@PathVariable Long usuarioId,@PathVariable Long paisId,@PathVariable Long provinciaId,@PathVariable Long categoriaId,@RequestBody Proveedor proveedor) {
 		try {
@@ -33,6 +35,8 @@ public class ProveedorControlador {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
+	
+	@PreAuthorize("hasRole('USUARIO')")
 	@PutMapping("/usuario/{usuarioId}/proveedor/{proveedorId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
 	public ResponseEntity<?> editarProveedor(@PathVariable Long usuarioId,@PathVariable Long proveedorId,@PathVariable Long paisId,@PathVariable Long provinciaId,@PathVariable Long categoriaId, @RequestBody Proveedor proveedorDetalles) {
 		try {

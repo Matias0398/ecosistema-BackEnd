@@ -86,7 +86,8 @@ public class AuthControlador {
     public ResponseEntity<?> registerGoogleUser(@RequestBody Map<String, String> request) {
         try {
             String accessToken = request.get("accessToken");
-
+            
+            
             if (accessToken == null) {
                 return ResponseEntity.badRequest().body("Missing access token");
             }
