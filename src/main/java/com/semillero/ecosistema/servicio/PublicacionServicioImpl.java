@@ -36,10 +36,6 @@ public class PublicacionServicioImpl {
 			Imagen imagen = imagenServicio.crearImagen(img);
 			listaDeImagenes.add(imagen);
 			
-		//listadeimagen vacia
-		//for (ImagenModel img : publicacion.getImagenes()) {
-			//Imagen img = imagenServicio.crearImagen(img);
-			//agregar a lista
 		}
 		
 		Publicacion publicacionNueva = new Publicacion();
@@ -50,8 +46,8 @@ public class PublicacionServicioImpl {
 		publicacionNueva.setImagenes(listaDeImagenes);
 		publicacionNueva.setUsuarioCreador(publicacionDto.getUsuarioCreador());
 		publicacionNueva.setCantidadDeVisualizaciones(publicacionDto.getCantidadDeVisualizaciones());
-		/*se la asignas a publicacion
-		completas los campos mapeando/haciendo el pasaje etc
+		/*se la asigna a publicacion
+		completas los campos mapeando/haciendo el pasaje 
 		y devolves la publicacion*/
 		
 		//publicacion.setImagenes(imagenServicio.cargarImagen(imageModel));
