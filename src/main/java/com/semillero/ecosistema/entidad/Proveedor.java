@@ -41,7 +41,7 @@ public class Proveedor {
 	private String nombre;
 	
 	@NotBlank(message = "La descripcion no puede estar en blanco")
-	@Size(max = 50, message = "La descripcion no puede tener mas de 50 caracteres")
+	@Size(max = 500, message = "La descripcion no puede tener mas de 500 caracteres")
 	private String descripcion;
 	
 	@NotBlank(message = "El telefono no puede estar en blanco")
@@ -49,7 +49,6 @@ public class Proveedor {
 	
 	@NotBlank(message = "El email no puede estar en blanco")
 	@Email
-	
 	private String email;
 	
 	private String facebook;
