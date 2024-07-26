@@ -19,14 +19,14 @@ import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.servicio.ProveedorServicio;
 
 @RestController
-@RequestMapping("proveedores")
+@RequestMapping
 public class ProveedorControlador {
 
 	@Autowired
 	private ProveedorServicio proveedorServicio;
 	
 	@PreAuthorize("hasRole('USUARIO')")
-	@PostMapping("/usuario/{usuarioId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
+	@PostMapping("/crearProveedor/usuario/{usuarioId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
 	public ResponseEntity<?> crearProveedor(@PathVariable Long usuarioId,@PathVariable Long paisId,@PathVariable Long provinciaId,@PathVariable Long categoriaId,@RequestBody Proveedor proveedor) {
 		try {
 			Proveedor nuevoProveedor = proveedorServicio.crearProveedor(usuarioId, proveedor, paisId, provinciaId,categoriaId);
@@ -37,7 +37,7 @@ public class ProveedorControlador {
 	}
 	
 	@PreAuthorize("hasRole('USUARIO')")
-	@PutMapping("/usuario/{usuarioId}/proveedor/{proveedorId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
+	@PutMapping("/editarProveedor/usuario/{usuarioId}/proveedor/{proveedorId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}")
 	public ResponseEntity<?> editarProveedor(@PathVariable Long usuarioId,@PathVariable Long proveedorId,@PathVariable Long paisId,@PathVariable Long provinciaId,@PathVariable Long categoriaId, @RequestBody Proveedor proveedorDetalles) {
 		try {
 			Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId, proveedorId, proveedorDetalles, paisId, provinciaId,categoriaId);
