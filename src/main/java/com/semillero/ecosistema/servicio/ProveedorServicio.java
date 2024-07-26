@@ -86,7 +86,7 @@ public class ProveedorServicio {
         proveedor.setCiudad(proveedorDetalles.getCiudad());
         proveedor.setCategoria(categoria);
         proveedor.setFeedback(proveedorDetalles.getFeedback());
-        proveedor.setImagenes(proveedorDetalles.getImagenes());
+        proveedor.setImagen(proveedorDetalles.getImagen());
         proveedor.setEstado(EstadoProveedor.CAMBIOS_REALIZADOS);
 
         return proveedorRepositorio.save(proveedor);

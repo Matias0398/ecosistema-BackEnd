@@ -47,8 +47,10 @@ public class Publicacion {
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	
+	
 	private Date fechaDeCreacion;
 	
+	@ElementCollection(fetch = FetchType.LAZY)
 	@OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
 	private List<Imagen> imagenes;

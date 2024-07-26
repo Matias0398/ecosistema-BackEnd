@@ -82,7 +82,7 @@ public class Proveedor {
 	private String feedback;
 	
 	
-	private List<Imagen> imagenes;
+	private String imagen;
 	
 	@ManyToOne
 	@JoinColumn(name="usuario_id")
