@@ -138,7 +138,13 @@
         	<groupId>org.springframework.session</groupId>
         	<artifactId>spring-session-core</artifactId>
     	</dependency>
-
+    	
+    	<!-- Cloudinary -->
+    	<dependency>
+    		<groupId>com.cloudinary</groupId>
+   			<artifactId>cloudinary-http44</artifactId>
+   			<version>1.36.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

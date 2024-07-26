@@ -1,9 +1,15 @@
 package com.semillero.ecosistema.entidad;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,10 +47,11 @@ public class Publicacion {
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	
-	
 	private Date fechaDeCreacion;
 	
-	private String imagenes;
+	@OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private List<Imagen> imagenes;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "usuario.id")

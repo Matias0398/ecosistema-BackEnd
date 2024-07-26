@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.servicio;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -8,6 +9,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.semillero.ecosistema.cloudinary.dto.ImageModel;
+import com.semillero.ecosistema.dto.PublicacionDto;
+import com.semillero.ecosistema.entidad.Imagen;
 import com.semillero.ecosistema.entidad.Publicacion;
 import com.semillero.ecosistema.repositorio.IPublicacionRepositorio;
 
@@ -20,9 +25,37 @@ public class PublicacionServicioImpl {
 	@Autowired
 	private IPublicacionRepositorio publicacionRepositorio;
 	
-	public Publicacion crearPublicacion(Publicacion publicacion) {
-		publicacion.setFechaDeCreacion(new Date());
-		return publicacionRepositorio.save(publicacion);
+	@Autowired
+	private ImagenServicioImpl imagenServicio;
+	
+	public Publicacion crearPublicacion(PublicacionDto publicacionDto) {
+		publicacionDto.setFechaDeCreacion(new Date());
+		
+		List<Imagen> listaDeImagenes = new ArrayList<Imagen>();
+		for (ImageModel img : publicacionDto.getImagenes()) {
+			Imagen imagen = imagenServicio.crearImagen(img);
+			listaDeImagenes.add(imagen);
+			
+		//listadeimagen vacia
+		//for (ImagenModel img : publicacion.getImagenes()) {
+			//Imagen img = imagenServicio.crearImagen(img);
+			//agregar a lista
+		}
+		
+		Publicacion publicacionNueva = new Publicacion();
+		publicacionNueva.setTitulo(publicacionDto.getTitulo());
+		publicacionNueva.setDescripcion(publicacionDto.getDescripcion());
+		publicacionNueva.setDeleted(publicacionDto.isDeleted());
+		publicacionNueva.setFechaDeCreacion(publicacionDto.getFechaDeCreacion());
+		publicacionNueva.setImagenes(listaDeImagenes);
+		publicacionNueva.setUsuarioCreador(publicacionDto.getUsuarioCreador());
+		publicacionNueva.setCantidadDeVisualizaciones(publicacionDto.getCantidadDeVisualizaciones());
+		/*se la asignas a publicacion
+		completas los campos mapeando/haciendo el pasaje etc
+		y devolves la publicacion*/
+		
+		//publicacion.setImagenes(imagenServicio.cargarImagen(imageModel));
+		return publicacionRepositorio.save(publicacionNueva);
 	}
 	
 	public List<Publicacion> obtenerPublicaciones() {
@@ -63,7 +96,7 @@ public class PublicacionServicioImpl {
 			Publicacion publicacionBD = opcPublicacion.get();
 			
 			
-			String nuevasImagenes = StringUtils.isNotBlank(publicacion.getImagenes())
+			List<Imagen> nuevasImagenes = !Objects.isNull(publicacion.getImagenes())
 					? publicacion.getImagenes()
 					: publicacionBD.getImagenes();
 			

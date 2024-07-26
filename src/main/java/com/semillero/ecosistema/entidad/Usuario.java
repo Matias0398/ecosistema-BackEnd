@@ -47,14 +47,8 @@ public class Usuario {
 	@Column(columnDefinition = "boolean default false")
 	private boolean deleted = false;
 	
-	//private String contrasena;
-	
-
 	@Enumerated(EnumType.STRING)
 	private RolDeUsuario rol;
-	
-	//private String telefono;
-	
 	
 	
 }

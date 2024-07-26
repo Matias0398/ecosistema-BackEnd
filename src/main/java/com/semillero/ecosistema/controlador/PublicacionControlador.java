@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.semillero.ecosistema.dto.PublicacionDto;
 import com.semillero.ecosistema.entidad.Publicacion;
 import com.semillero.ecosistema.entidad.Usuario;
 import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
@@ -35,12 +36,12 @@ public class PublicacionControlador {
 
 	@PreAuthorize("hasRole('ADMIN')")  
 	@PostMapping(value="/publicar/{userId}")
-	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId, @Valid @RequestBody Publicacion publicacion) {
+	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId, @Valid @RequestBody PublicacionDto publicacionDto) {
 		Optional<Usuario> user = usuarioRepositorio.findById(userId);
 		
 		   if(user.isPresent() && user.get().getRol()==RolDeUsuario.ADMIN){
-		        publicacion.setUsuarioCreador(user.get());
-		        publicacionServicioImpl.crearPublicacion(publicacion);
+		        publicacionDto.setUsuarioCreador(user.get());
+		        publicacionServicioImpl.crearPublicacion(publicacionDto);
 		        return ResponseEntity.ok("Publicación creada con éxito");
 		    }
 		   return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado o con los permisos requeridos");

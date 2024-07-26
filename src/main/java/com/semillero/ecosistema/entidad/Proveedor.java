@@ -1,6 +1,8 @@
 package com.semillero.ecosistema.entidad;
 
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -79,7 +81,8 @@ public class Proveedor {
 	
 	private String feedback;
 	
-	private String imagenes;
+	
+	private List<Imagen> imagenes;
 	
 	@ManyToOne
 	@JoinColumn(name="usuario_id")
