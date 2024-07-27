@@ -10,4 +10,6 @@ public interface IProveedorRepositorio extends JpaRepository<Proveedor, Long>{
 
 	int countByUsuarioId(Long usuarioId);
 	List<Proveedor> findByNombreContainingIgnoreCase(String nombre);
+	
+	List<Proveedor> findByCategoriaId(Long categoriaId);
 }

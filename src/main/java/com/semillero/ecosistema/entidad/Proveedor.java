@@ -1,8 +1,12 @@
 package com.semillero.ecosistema.entidad;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,7 +48,7 @@ public class Proveedor {
 	private String nombre;
 	
 	@NotBlank(message = "La descripcion no puede estar en blanco")
-	@Size(max = 50, message = "La descripcion no puede tener mas de 50 caracteres")
+	@Size(max = 500, message = "La descripcion no puede tener mas de 500 caracteres")
 	private String descripcion;
 	
 	@NotBlank(message = "El telefono no puede estar en blanco")
@@ -51,7 +56,6 @@ public class Proveedor {
 	
 	@NotBlank(message = "El email no puede estar en blanco")
 	@Email
-	
 	private String email;
 	
 	private String facebook;
@@ -81,8 +85,9 @@ public class Proveedor {
 	
 	private String feedback;
 	
-	
-	private String imagen;
+	@OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private List<Imagen> imagenes= new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name="usuario_id")

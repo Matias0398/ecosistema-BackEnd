@@ -42,10 +42,7 @@ public class PublicacionControlador {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping(value = "/publicar/{userId}", consumes = "multipart/form-data")
-	public ResponseEntity<String> crearPublicacion(
-	        @PathVariable Long userId,
-	        @Valid @ModelAttribute PublicacionDto publicacionDto,
-	        @RequestPart("imagen") List<MultipartFile> files) throws IOException {
+	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId,@Valid @ModelAttribute PublicacionDto publicacionDto,@RequestPart("imagen") List<MultipartFile> files) throws IOException {
 
 	    Optional<Usuario> user = usuarioRepositorio.findById(userId);
 	    

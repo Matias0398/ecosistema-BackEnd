@@ -37,4 +37,10 @@ public class Imagen {
 	@JoinColumn(name="publicacion_id")
 	@JsonBackReference
 	private Publicacion publicacion;
+	
+	
+	@ManyToOne(fetch= FetchType.LAZY)
+	@JoinColumn(name="proveedor_id")
+	@JsonBackReference
+	private Proveedor proveedor;
 }

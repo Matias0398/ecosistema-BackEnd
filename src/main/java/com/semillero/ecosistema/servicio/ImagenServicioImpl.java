@@ -36,4 +36,13 @@ public class ImagenServicioImpl {
             return null;
         }
     }
+    
+    public Imagen buscarPorId(Long id) throws Exception {
+        return imagenRepositorio.findById(id)
+                .orElseThrow(() -> new Exception("Imagen no encontrada"));
+    }
+    
+    public void eliminarImagen(Imagen imagen) {
+        imagenRepositorio.delete(imagen);
+    }
 }

@@ -3,6 +3,7 @@ package com.semillero.ecosistema.entidad;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -39,5 +40,6 @@ public class Pais {
 	
 	@OneToMany(mappedBy = "pais", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
+	@JsonIgnore
 	private List<Provincia> provincias;
 }
