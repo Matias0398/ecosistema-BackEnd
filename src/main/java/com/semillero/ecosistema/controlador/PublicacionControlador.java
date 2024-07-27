@@ -1,5 +1,7 @@
 package com.semillero.ecosistema.controlador;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,12 +11,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.semillero.ecosistema.cloudinary.dto.ImageModel;
+import com.semillero.ecosistema.dto.PublicacionDto;
 import com.semillero.ecosistema.entidad.Publicacion;
 import com.semillero.ecosistema.entidad.Usuario;
 import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
@@ -33,18 +40,36 @@ public class PublicacionControlador {
 	
 
 
-	@PreAuthorize("hasRole('ADMIN')")  
-	@PostMapping(value="/publicar/{userId}")
-	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId, @Valid @RequestBody Publicacion publicacion) {
-		Optional<Usuario> user = usuarioRepositorio.findById(userId);
-		
-		   if(user.isPresent() && user.get().getRol()==RolDeUsuario.ADMIN){
-		        publicacion.setUsuarioCreador(user.get());
-		        publicacionServicioImpl.crearPublicacion(publicacion);
-		        return ResponseEntity.ok("Publicación creada con éxito");
-		    }
-		   return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado o con los permisos requeridos");
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping(value = "/publicar/{userId}", consumes = "multipart/form-data")
+	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId,@Valid @ModelAttribute PublicacionDto publicacionDto,@RequestPart("imagen") List<MultipartFile> files) throws IOException {
+
+	    Optional<Usuario> user = usuarioRepositorio.findById(userId);
+	    
+	    if (user.isPresent() && user.get().getRol() == RolDeUsuario.ADMIN) {
+	        List<ImageModel> imageModels = new ArrayList<>();
+	        
+	        // Crear ImageModel para cada archivo
+	        for (MultipartFile file : files) {
+	            String nombreArchivo = file.getOriginalFilename();
+	            
+	            ImageModel imageModel = new ImageModel();
+	            imageModel.setFile(file);
+	            imageModel.setNombre(nombreArchivo);
+	            
+	            imageModels.add(imageModel);
+	        }
+
+	        // Pasar la lista de ImageModel al servicio de publicaciones
+	        publicacionDto.setUsuarioCreador(user.get());
+	        publicacionServicioImpl.crearPublicacion(publicacionDto, imageModels);
+	        return ResponseEntity.ok("Publicación creada con éxito");
+	    }
+	    
+	    return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado o con los permisos requeridos");
 	}
+
+
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(value="/editar-publicacion/{id}")
