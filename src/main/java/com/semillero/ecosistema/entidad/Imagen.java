@@ -3,7 +3,6 @@ package com.semillero.ecosistema.entidad;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -27,9 +26,11 @@ public class Imagen {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String nombre;
-	
 	private String url;
+	
+	private String publicId;
+	
+	private String nombre;
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)

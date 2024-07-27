@@ -21,7 +21,6 @@ public class PublicacionDto {
 	private String descripcion;
 	private boolean deleted = false;
 	private Date fechaDeCreacion;
-	private List<ImageModel> imagenes;
 	private Usuario usuarioCreador;
 	private int cantidadDeVisualizaciones = 0;
 }

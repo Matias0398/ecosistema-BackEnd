@@ -1,13 +1,12 @@
 package com.semillero.ecosistema.entidad;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -50,7 +49,6 @@ public class Publicacion {
 	
 	private Date fechaDeCreacion;
 	
-	@ElementCollection(fetch = FetchType.LAZY)
 	@OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
 	private List<Imagen> imagenes;

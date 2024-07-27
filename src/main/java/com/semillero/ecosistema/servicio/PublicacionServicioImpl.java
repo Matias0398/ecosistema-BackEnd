@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.servicio;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,50 +10,58 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
+import com.semillero.ecosistema.dto.ImageUploadResult;
 import com.semillero.ecosistema.dto.PublicacionDto;
 import com.semillero.ecosistema.entidad.Imagen;
 import com.semillero.ecosistema.entidad.Publicacion;
 import com.semillero.ecosistema.repositorio.IPublicacionRepositorio;
 
-import io.micrometer.common.util.StringUtils;
 
 @Service
 @Transactional
 public class PublicacionServicioImpl {
 
 	@Autowired
-	private IPublicacionRepositorio publicacionRepositorio;
+    private IPublicacionRepositorio publicacionRepositorio;
 	
 	@Autowired
 	private ImagenServicioImpl imagenServicio;
-	
-	public Publicacion crearPublicacion(PublicacionDto publicacionDto) {
-		publicacionDto.setFechaDeCreacion(new Date());
-		
-		List<Imagen> listaDeImagenes = new ArrayList<Imagen>();
-		for (ImageModel img : publicacionDto.getImagenes()) {
-			Imagen imagen = imagenServicio.crearImagen(img);
-			listaDeImagenes.add(imagen);
-			
-		}
-		
-		Publicacion publicacionNueva = new Publicacion();
-		publicacionNueva.setTitulo(publicacionDto.getTitulo());
-		publicacionNueva.setDescripcion(publicacionDto.getDescripcion());
-		publicacionNueva.setDeleted(publicacionDto.isDeleted());
-		publicacionNueva.setFechaDeCreacion(publicacionDto.getFechaDeCreacion());
-		publicacionNueva.setImagenes(listaDeImagenes);
-		publicacionNueva.setUsuarioCreador(publicacionDto.getUsuarioCreador());
-		publicacionNueva.setCantidadDeVisualizaciones(publicacionDto.getCantidadDeVisualizaciones());
-		/*se la asigna a publicacion
-		completas los campos mapeando/haciendo el pasaje 
-		y devolves la publicacion*/
-		
-		//publicacion.setImagenes(imagenServicio.cargarImagen(imageModel));
-		return publicacionRepositorio.save(publicacionNueva);
+
+	public Publicacion crearPublicacion(PublicacionDto publicacionDto, List<ImageModel> imageModels) throws IOException {
+	    publicacionDto.setFechaDeCreacion(new Date());
+
+	    Publicacion publicacionNueva = new Publicacion();
+	    publicacionNueva.setTitulo(publicacionDto.getTitulo());
+	    publicacionNueva.setDescripcion(publicacionDto.getDescripcion());
+	    publicacionNueva.setDeleted(publicacionDto.isDeleted());
+	    publicacionNueva.setFechaDeCreacion(publicacionDto.getFechaDeCreacion());
+	    publicacionNueva.setUsuarioCreador(publicacionDto.getUsuarioCreador());
+	    publicacionNueva.setCantidadDeVisualizaciones(publicacionDto.getCantidadDeVisualizaciones());
+	    
+	    List<Imagen> listaDeImagenes = new ArrayList<>();
+
+	    // Procesar cada imagen
+	    for (ImageModel imageModel : imageModels) {
+	        if (imageModel.getFile() != null && !imageModel.getFile().isEmpty()) {
+	            Imagen imagen = imagenServicio.crearImagen(imageModel);
+	            if (imagen != null) {
+	                imagen.setPublicacion(publicacionNueva); // Establecer la relación
+	                listaDeImagenes.add(imagen);
+	            }
+	        }
+	    }
+
+	    publicacionNueva.setImagenes(listaDeImagenes);
+	    
+	    // Guardar la publicación
+	    Publicacion savedPublicacion = publicacionRepositorio.save(publicacionNueva);
+	    
+	    return savedPublicacion;
 	}
+
 	
 	public List<Publicacion> obtenerPublicaciones() {
 		return publicacionRepositorio.findAll();
