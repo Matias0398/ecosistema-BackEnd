@@ -24,7 +24,8 @@ public class JwtUtil {
         claims.put("nombre", usuario.getNombre());
         claims.put("email", usuario.getEmail());
         claims.put("roles", usuario.getRol().name()); // Asumiendo que `getRol()` devuelve un enum o un valor que puede ser convertido a String
-        
+        claims.put("userId", usuario.getId()); // Añadir el usuarioId a las reclamaciones
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(usuario.getEmail())
