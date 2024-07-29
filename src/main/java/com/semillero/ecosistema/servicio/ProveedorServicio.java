@@ -70,6 +70,7 @@ public class ProveedorServicio {
 		proveedornuevo.setProvincia(provincia);
 		proveedornuevo.setEstado(EstadoProveedor.REVISION_INICIAL);
 		proveedornuevo.setNombre(proveedorDto.getNombre());
+		proveedornuevo.setTipoProveedor(proveedorDto.getTipoProveedor());
 		proveedornuevo.setCiudad(proveedorDto.getCiudad());
 		proveedornuevo.setDescripcion(proveedorDto.getDescripcion());
 		proveedornuevo.setEmail(proveedorDto.getEmail());
@@ -115,7 +116,7 @@ public class ProveedorServicio {
 	    proveedor.setCiudad(proveedorDetalles.getCiudad());
 	    proveedor.setCategoria(categoria);
 	    proveedor.setFeedback(proveedorDetalles.getFeedback());
-	    proveedor.setEstado(EstadoProveedor.CAMBIOS_REALIZADOS);
+	    proveedor.setEstado(EstadoProveedor.REVISION_INICIAL);
 
 	    // Manejar las nuevas imágenes
 	    List<Imagen> listaImagenes = new ArrayList<>();

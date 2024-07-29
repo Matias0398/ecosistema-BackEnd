@@ -24,6 +24,8 @@ public class ProveedorDto {
     private String nombre;
 
     private String descripcion;
+    
+    private String tipoProveedor;
 
     private String telefono;
 
