@@ -75,7 +75,7 @@ public class ProveedorServicio {
 		proveedornuevo.setDescripcion(proveedorDto.getDescripcion());
 		proveedornuevo.setEmail(proveedorDto.getEmail());
 		proveedornuevo.setTelefono(proveedorDto.getTelefono());
-		
+		proveedornuevo.setFeedback("Proveedor en revisión");
 		List<Imagen>listaimagenes=new ArrayList<>();
 		
 		for(ImageModel imageModel : imageModels) {
