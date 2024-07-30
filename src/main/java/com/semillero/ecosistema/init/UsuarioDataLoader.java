@@ -2,6 +2,7 @@ package com.semillero.ecosistema.init;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.semillero.ecosistema.entidad.Usuario;
@@ -9,6 +10,7 @@ import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
 import com.semillero.ecosistema.repositorio.IUsuarioRepositorio;
 
 @Component
+@Order(4)
 public class UsuarioDataLoader implements CommandLineRunner {
 		@Autowired
 		IUsuarioRepositorio usuarioRepositorio;

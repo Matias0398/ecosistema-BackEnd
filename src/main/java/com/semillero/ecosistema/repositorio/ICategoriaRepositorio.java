@@ -5,4 +5,6 @@ import com.semillero.ecosistema.entidad.Categoria;
 
 public interface ICategoriaRepositorio extends JpaRepository<Categoria,Long>{
 
+	Categoria findByNombre(String nombre);
+
 }

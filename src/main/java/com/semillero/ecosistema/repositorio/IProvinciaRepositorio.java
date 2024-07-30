@@ -8,4 +8,6 @@ import com.semillero.ecosistema.entidad.Provincia;
 
 public interface IProvinciaRepositorio extends JpaRepository<Provincia, Long>{
 	Optional<Provincia> findByIdAndPaisId(Long provinciaId, Long paisId);
+	
+	Provincia findByNombre(String string);
 }

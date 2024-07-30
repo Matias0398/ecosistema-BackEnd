@@ -22,6 +22,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +32,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Proveedor {
 	public enum EstadoProveedor {
 		REVISION_INICIAL,
@@ -51,7 +53,7 @@ public class Proveedor {
 	@Size(max = 300, message = "La descripcion no puede tener mas de 300 caracteres")
 	private String descripcion;
 	
-	@NotBlank(message=" La brebe descripcion no puede estar en blanco")
+	@NotBlank(message=" La breve descripcion no puede estar en blanco")
 	@Size(max=50,message="No puede tener mas de 50 caracteres")
 	private String tipoProveedor;
 	

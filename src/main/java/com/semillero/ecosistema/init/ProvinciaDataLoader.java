@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.semillero.ecosistema.entidad.Pais;
@@ -12,6 +13,7 @@ import com.semillero.ecosistema.repositorio.IPaisRepositorio;
 import com.semillero.ecosistema.repositorio.IProvinciaRepositorio;
 
 @Component
+@Order(3)
 public class ProvinciaDataLoader implements CommandLineRunner {
 
     @Autowired

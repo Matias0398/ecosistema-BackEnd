@@ -12,4 +12,7 @@ import com.semillero.ecosistema.entidad.Usuario;
 public interface IUsuarioRepositorio extends JpaRepository<Usuario, Long> {
 	Optional<Usuario> findByEmail(String email);
 
+
+	
+
 }
