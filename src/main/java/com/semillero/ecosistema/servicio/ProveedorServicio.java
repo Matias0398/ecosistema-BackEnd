@@ -76,6 +76,8 @@ public class ProveedorServicio {
 		proveedornuevo.setEmail(proveedorDto.getEmail());
 		proveedornuevo.setTelefono(proveedorDto.getTelefono());
 		proveedornuevo.setFeedback("Proveedor en revisión");
+		proveedornuevo.setFacebook(proveedorDto.getFacebook());
+		proveedornuevo.setInstagram(proveedorDto.getInstagram());
 		List<Imagen>listaimagenes=new ArrayList<>();
 		
 		for(ImageModel imageModel : imageModels) {
