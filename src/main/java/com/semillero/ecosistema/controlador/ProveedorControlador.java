@@ -90,9 +90,9 @@ public class ProveedorControlador {
 	@GetMapping("/buscarPorCategoria/{categoriaId}")
     public ResponseEntity<List<Proveedor>> buscarProveedoresPorCategoria(@PathVariable Long categoriaId) {
 		return ResponseEntity.ok(proveedorServicio.buscarPorCategoriaId(categoriaId));
-    }
+	}
 	
-	@GetMapping
+	@GetMapping("/mostrarProveedorActivo")
 	public ResponseEntity<List<Proveedor>> mostrarProveedorActivo(){
 		return ResponseEntity.ok(proveedorServicio.mostrarProveedoresActivos());
 	}

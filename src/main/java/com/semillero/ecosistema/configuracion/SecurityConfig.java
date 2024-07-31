@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**","/publicaciones").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
                 .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
                 .requestMatchers("/crearProveedor/**", "/editarProveedor/**").hasRole("USUARIO")
-                .requestMatchers("/buscarPorCategoria/**").permitAll()
+                .requestMatchers("/buscarPorCategoria/**","/mostrarProveedorActivo").permitAll()
                 .requestMatchers("/categorias/**","/ubicacion/**").permitAll()
                 .anyRequest().authenticated() // Asegura que todas las demás solicitudes estén autenticadas
             )
