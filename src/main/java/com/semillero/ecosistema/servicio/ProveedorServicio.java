@@ -2,6 +2,7 @@ package com.semillero.ecosistema.servicio;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,10 @@ import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.entidad.Proveedor.EstadoProveedor;
 import com.semillero.ecosistema.entidad.Provincia;
 import com.semillero.ecosistema.entidad.Usuario;
+import com.semillero.ecosistema.repositorio.ICategoriaRepositorio;
+import com.semillero.ecosistema.repositorio.IPaisRepositorio;
 import com.semillero.ecosistema.repositorio.IProveedorRepositorio;
+import com.semillero.ecosistema.repositorio.IProvinciaRepositorio;
 
 @Service
 public class ProveedorServicio {
@@ -37,62 +41,87 @@ public class ProveedorServicio {
 	
 	@Autowired
 	private ImagenServicioImpl imagenServicioImpl;
-	
+
+	@Autowired
+	private ICategoriaRepositorio categoriaRepository;
+
+	@Autowired
+	private IPaisRepositorio paisRepository;
+
+	@Autowired
+	private IProvinciaRepositorio provinciaRepository;
+	    
 	private static final int maxProveedores=3;
 	
-	public Proveedor crearProveedor(Long usuarioId, ProveedorDto proveedorDto, Long paisId, Long provinciaId, Long categoriaId,List<ImageModel>imageModels) throws Exception {
-		int cantidadProveedores=proveedorRepositorio.countByUsuarioId(usuarioId);
-		if(cantidadProveedores>=maxProveedores) {
-			throw new Exception("El usuario ya tiene el maximo de proveedores");
-		}
-		
-		
-		Usuario usuario = usuarioServicioImpl.buscarPorId(usuarioId);
-		
-		if(usuario==null) {
-			throw new Exception("El usuario no existe");
-		}
-		
-		PaisDto paisDto = paisProvinciaServiceImpl.obtenerPaisDtoPorId(paisId);
-		
-		Provincia provincia=paisProvinciaServiceImpl.mostrarProvinciaPorId(paisId, provinciaId);
-		
-		if (provincia==null) {
-            throw new Exception("La provincia no pertenece al país especificado.");
+	public Proveedor crearProveedor(Long usuarioId, ProveedorDto proveedorDto, List<ImageModel> imageModels) throws Exception {
+        int cantidadProveedores = proveedorRepositorio.countByUsuarioId(usuarioId);
+        if (cantidadProveedores >= maxProveedores) {
+            throw new Exception("El usuario ya tiene el máximo de proveedores");
         }
-		
-		Categoria categoria=categoriaServicioImpl.buscarPorId(categoriaId);
-		
-		Pais pais = new Pais(paisDto.getId(), paisDto.getNombre());
-		Proveedor proveedornuevo=new Proveedor();
-		proveedornuevo.setCategoria(categoria);
-		proveedornuevo.setUsuario(usuario);
-		proveedornuevo.setPais(pais);
-		proveedornuevo.setProvincia(provincia);
-		proveedornuevo.setEstado(EstadoProveedor.REVISION_INICIAL);
-		proveedornuevo.setNombre(proveedorDto.getNombre());
-		proveedornuevo.setTipoProveedor(proveedorDto.getTipoProveedor());
-		proveedornuevo.setCiudad(proveedorDto.getCiudad());
-		proveedornuevo.setDescripcion(proveedorDto.getDescripcion());
-		proveedornuevo.setEmail(proveedorDto.getEmail());
-		proveedornuevo.setTelefono(proveedorDto.getTelefono());
-		proveedornuevo.setFeedback("Proveedor en revisión");
-		proveedornuevo.setFacebook(proveedorDto.getFacebook());
-		proveedornuevo.setInstagram(proveedorDto.getInstagram());
-		List<Imagen>listaimagenes=new ArrayList<>();
-		
-		for(ImageModel imageModel : imageModels) {
-			if(imageModel.getFile()!=null && !imageModel.getFile().isEmpty()) {
-				Imagen imagen=imagenServicioImpl.crearImagen(imageModel);
-				if(imagen!=null) {
-					imagen.setProveedor(proveedornuevo);
-					listaimagenes.add(imagen);
-				}
-			}
-		}
-		proveedornuevo.setImagenes(listaimagenes);
-		return proveedorRepositorio.save(proveedornuevo);
-	}
+
+        Usuario usuario = usuarioServicioImpl.buscarPorId(usuarioId);
+        if (usuario == null) {
+            throw new Exception("El usuario no existe");
+        }
+
+        Proveedor proveedornuevo = new Proveedor();
+
+        // Buscar y asignar Categoria
+        if (proveedorDto.getCategoriaId() != null) {
+            Optional<Categoria> categoriaOptional = categoriaRepository.findById(proveedorDto.getCategoriaId());
+            if (categoriaOptional.isPresent()) {
+                proveedornuevo.setCategoria(categoriaOptional.get());
+            } else {
+                throw new Exception("No se encontró una categoría con el ID: " + proveedorDto.getCategoriaId());
+            }
+        }
+
+        // Buscar y asignar Pais
+        if (proveedorDto.getPaisId() != null) {
+            Optional<Pais> paisOptional = paisRepository.findById(proveedorDto.getPaisId());
+            if (paisOptional.isPresent()) {
+                proveedornuevo.setPais(paisOptional.get());
+            } else {
+                throw new Exception("No se encontró un país con el ID: " + proveedorDto.getPaisId());
+            }
+        }
+
+        // Buscar y asignar Provincia
+        if (proveedorDto.getProvinciaId() != null) {
+            Optional<Provincia> provinciaOptional = provinciaRepository.findById(proveedorDto.getProvinciaId());
+            if (provinciaOptional.isPresent()) {
+                proveedornuevo.setProvincia(provinciaOptional.get());
+            } else {
+                throw new Exception("No se encontró una provincia con el ID: " + proveedorDto.getProvinciaId());
+            }
+        }
+
+        proveedornuevo.setUsuario(usuario);
+        proveedornuevo.setEstado(EstadoProveedor.REVISION_INICIAL);
+        proveedornuevo.setNombre(proveedorDto.getNombre());
+        proveedornuevo.setTipoProveedor(proveedorDto.getTipoProveedor());
+        proveedornuevo.setCiudad(proveedorDto.getCiudad());
+        proveedornuevo.setDescripcion(proveedorDto.getDescripcion());
+        proveedornuevo.setEmail(proveedorDto.getEmail());
+        proveedornuevo.setTelefono(proveedorDto.getTelefono());
+        proveedornuevo.setFeedback("Proveedor en revisión");
+        proveedornuevo.setFacebook(proveedorDto.getFacebook());
+        proveedornuevo.setInstagram(proveedorDto.getInstagram());
+
+        List<Imagen> listaimagenes = new ArrayList<>();
+        for (ImageModel imageModel : imageModels) {
+            if (imageModel.getFile() != null && !imageModel.getFile().isEmpty()) {
+                Imagen imagen = imagenServicioImpl.crearImagen(imageModel);
+                if (imagen != null) {
+                    imagen.setProveedor(proveedornuevo);
+                    listaimagenes.add(imagen);
+                }
+            }
+        }
+        proveedornuevo.setImagenes(listaimagenes);
+
+        return proveedorRepositorio.save(proveedornuevo);
+    }
 	
 	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles, Long paisId, Long provinciaId, Long categoriaId, List<MultipartFile> files) throws Exception {
 	    Proveedor proveedor = proveedorRepositorio.findById(proveedorId)

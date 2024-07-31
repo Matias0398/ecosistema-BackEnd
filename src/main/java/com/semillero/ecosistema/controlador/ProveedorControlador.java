@@ -32,10 +32,9 @@ public class ProveedorControlador {
 	private ProveedorServicio proveedorServicio;
 	
 	@PreAuthorize("hasRole('USUARIO')")
-	@PostMapping(value="/crearProveedor/usuario/{usuarioId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}",consumes = "multipart/form-data")
-	public ResponseEntity<?> crearProveedor(@PathVariable Long usuarioId,@PathVariable Long paisId,@PathVariable Long provinciaId,@PathVariable Long categoriaId,@ModelAttribute ProveedorDto proveedorDto,@RequestPart("imagenes") List<MultipartFile> files) {
+	@PostMapping(value="/crearProveedor/usuario/{usuarioId}",consumes = "multipart/form-data")
+	public ResponseEntity<?> crearProveedor(@PathVariable Long usuarioId,@ModelAttribute ProveedorDto proveedorDto,@RequestPart("imagenes") List<MultipartFile> files) {
 		try {
-			
 			List<ImageModel>imageModels=new ArrayList<>();
 			for(MultipartFile file : files) {
 				String nombreArchivo=file.getOriginalFilename();
@@ -49,7 +48,7 @@ public class ProveedorControlador {
 			}
 			
 			proveedorDto.setUsuarioId(usuarioId);
-			proveedorServicio.crearProveedor(usuarioId, proveedorDto, paisId, provinciaId,categoriaId,imageModels);
+			proveedorServicio.crearProveedor(usuarioId, proveedorDto,imageModels);
            
 			return ResponseEntity.ok("Proveedor creado con éxito");
 		}catch (Exception e) {
