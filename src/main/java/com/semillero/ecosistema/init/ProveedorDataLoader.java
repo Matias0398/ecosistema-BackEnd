@@ -69,100 +69,100 @@ public class ProveedorDataLoader implements CommandLineRunner {
 			Optional<Usuario> usuario5 = usuarioRepositorio.findByEmail("ecosistematt@gmail.com");
 			
 			//crea los proveedores
-			Proveedor proveedor1 = Proveedor.builder()
-					.ciudad("Godoy Cruz")
-					.deleted(false)
-					.descripcion("Lavanda es un proyecto familiar. Perseguimos una cosmética efectiva")
-					.tipoProveedor("Cosmética natural")
-					.email("lavanda@gmail.com")
-					.estado(EstadoProveedor.ACEPTADO)
-					.facebook("www.facebook.com/lavanda")
-					.feedback(null)
-					.instagram("www.instagram.com/lavanda")
-					.nombre("Lavanda")
-					.telefono("3885111877")
-					.categoria(categoria1)
-					.pais(pais1)
-					.provincia(provincia1)
-					.usuario(usuario1.get())
-					.imagenes(null)
-					.build();
+			Proveedor proveedor1 = new Proveedor();
+			proveedor1.setCiudad("Godoy Cruz");
+			proveedor1.setDeleted(false);
+			proveedor1.setDescripcion("Lavanda es un proyecto familiar. Perseguimos una cosmética efectiva");
+			proveedor1.setTipoProveedor("Cosmética natural");
+			proveedor1.setEmail("lavanda@gmail.com");
+			proveedor1.setEstado(EstadoProveedor.ACEPTADO);
+			proveedor1.setFacebook("www.facebook.com/lavanda");
+			proveedor1.setFeedback(null);
+			proveedor1.setInstagram("www.instagram.com/lavanda");
+			proveedor1.setNombre("Lavanda");
+			proveedor1.setTelefono("3885111877");
+			proveedor1.setCategoria(categoria1);
+			proveedor1.setPais(pais1);
+			proveedor1.setProvincia(provincia1);
+			proveedor1.setUsuario(usuario1.get());
+			proveedor1.setImagenes(null);
 			
-			Proveedor proveedor2 = Proveedor.builder()
-					.ciudad("San Salvador de Jujuy")
-					.deleted(false)
-					.descripcion("Lila es un proyecto familiar. Perseguimos una cosmética efectiva")
-					.tipoProveedor("Cosmética natural")
-					.email("lila@gmail.com")
-					.estado(EstadoProveedor.ACEPTADO)
-					.facebook("www.facebook.com/lila")
-					.feedback(null)
-					.instagram("www.instagram.com/lila")
-					.nombre("Lila")
-					.telefono("256336699")
-					.categoria(categoria2)
-					.pais(pais2)
-					.provincia(provincia2)
-					.usuario(usuario2.get())
-					.imagenes(null)
-					.build();
 			
-			Proveedor proveedor3 = Proveedor.builder()
-					.ciudad("Salta")
-					.deleted(false)
-					.descripcion("Hilandería Guemes es un proyecto familiar. Perseguimos una cosmética efectiva")
-					.tipoProveedor("Construcción")
-					.email("guemes@gmail.com")
-					.estado(EstadoProveedor.ACEPTADO)
-					.facebook("www.facebook.com/hilanderia")
-					.feedback(null)
-					.instagram("www.instagram.com/hilanderia")
-					.nombre("Hilanderia Guemes")
-					.telefono("3875446877")
-					.categoria(categoria3)
-					.pais(pais3)
-					.provincia(provincia3)
-					.usuario(usuario3.get())
-					.imagenes(null)
-					.build();
+			Proveedor proveedor2 = new Proveedor();
+			proveedor2.setCiudad("San Salvador de Jujuy");
+			proveedor2.setDeleted(false);
+			proveedor2.setDescripcion("Lila es un proyecto familiar. Perseguimos una cosmética efectiva");
+			proveedor2.setTipoProveedor("Cosmética natural");
+			proveedor2.setEmail("lila@gmail.com");
+			proveedor2.setEstado(EstadoProveedor.ACEPTADO);
+			proveedor2.setFacebook("www.facebook.com/lila");
+			proveedor2.setFeedback(null);
+			proveedor2.setInstagram("www.instagram.com/lila");
+			proveedor2.setNombre("Lila");
+			proveedor2.setTelefono("256336699");
+			proveedor2.setCategoria(categoria2);
+			proveedor2.setPais(pais2);
+			proveedor2.setProvincia(provincia2);
+			proveedor2.setUsuario(usuario2.get());
+			proveedor2.setImagenes(null);
 			
-			Proveedor proveedor4 = Proveedor.builder()
-					.ciudad("San Miguel de Tucumán")
-					.deleted(false)
-					.descripcion("Beto Sandwiches es un proyecto familiar. Perseguimos una cosmética efectiva")
-					.tipoProveedor("Cocina natural")
-					.email("beto@gmail.com")
-					.estado(EstadoProveedor.ACEPTADO)
-					.facebook("www.facebook.com/beto")
-					.feedback(null)
-					.instagram("www.instagram.com/beto")
-					.nombre("Beto Sandwiches")
-					.telefono("3815446877")
-					.categoria(categoria4)
-					.pais(pais4)
-					.provincia(provincia4)
-					.usuario(usuario4.get())
-					.imagenes(null)
-					.build();
 			
-			Proveedor proveedor5 = Proveedor.builder()
-					.ciudad("Mendoza")
-					.deleted(false)
-					.descripcion("Avocado es un proyecto familiar. Perseguimos una cosmética efectiva")
-					.tipoProveedor("Cocina natural")
-					.email("avocado@gmail.com")
-					.estado(EstadoProveedor.ACEPTADO)
-					.facebook("www.facebook.com/avocado")
-					.feedback(null)
-					.instagram("www.instagram.com/avocado")
-					.nombre("Avocado")
-					.telefono("3815446877")
-					.categoria(categoria5)
-					.pais(pais5)
-					.provincia(provincia5)
-					.usuario(usuario5.get())
-					.imagenes(null)
-					.build();
+
+			Proveedor proveedor3 = new Proveedor();
+			proveedor3.setCiudad("Salta");
+			proveedor3.setDeleted(false);
+			proveedor3.setDescripcion("Hilandería Guemes es un proyecto familiar. Perseguimos una cosmética efectiva");
+			proveedor3.setTipoProveedor("Construcción");
+			proveedor3.setEmail("guemes@gmail.com");
+			proveedor3.setEstado(EstadoProveedor.ACEPTADO);
+			proveedor3.setFacebook("ww.facebook.com/hilanderia");
+			proveedor3.setFeedback(null);
+			proveedor3.setInstagram("www.instagram.com/hilanderia");
+			proveedor3.setNombre("Hilanderia Guemes");
+			proveedor3.setTelefono("3875446877");
+			proveedor3.setCategoria(categoria3);
+			proveedor3.setPais(pais3);
+			proveedor3.setProvincia(provincia3);
+			proveedor3.setUsuario(usuario3.get());
+			proveedor3.setImagenes(null);
+			
+			
+			Proveedor proveedor4 = new Proveedor();
+			proveedor4.setCiudad("San Miguel de Tucumán");
+			proveedor4.setDeleted(false);
+			proveedor4.setDescripcion("Beto Sandwiches es un proyecto familiar. Perseguimos una cosmética efectiva");
+			proveedor4.setTipoProveedor("Cocina natural");
+			proveedor4.setEmail("beto@gmail.com");
+			proveedor4.setEstado(EstadoProveedor.ACEPTADO);
+			proveedor4.setFacebook("www.facebook.com/beto");
+			proveedor4.setFeedback(null);
+			proveedor4.setInstagram("www.instagram.com/beto");
+			proveedor4.setNombre("Beto Sandwiches");
+			proveedor4.setTelefono("3815446877");
+			proveedor4.setCategoria(categoria4);
+			proveedor4.setPais(pais4);
+			proveedor4.setProvincia(provincia4);
+			proveedor4.setUsuario(usuario4.get());
+			proveedor4.setImagenes(null);
+			
+			
+			Proveedor proveedor5 = new Proveedor();
+			proveedor5.setCiudad("Mendoza");
+			proveedor5.setDeleted(false);
+			proveedor5.setDescripcion("Avocado es un proyecto familiar. Perseguimos una cosmética efectiva");
+			proveedor5.setTipoProveedor("Cocina natural");
+			proveedor5.setEmail("avocado@gmail.com");
+			proveedor5.setEstado(EstadoProveedor.ACEPTADO);
+			proveedor5.setFacebook("www.facebook.com/avocado");
+			proveedor5.setFeedback(null);
+			proveedor5.setInstagram("www.instagram.com/avocado");
+			proveedor5.setNombre("Avocado");
+			proveedor5.setTelefono("3815446877");
+			proveedor5.setCategoria(categoria5);
+			proveedor5.setPais(pais5);
+			proveedor5.setProvincia(provincia5);
+			proveedor5.setUsuario(usuario5.get());
+			proveedor5.setImagenes(null);
 			
 			 //guarda los proveedores
 			 proveedorRepositorio.save(proveedor1);
