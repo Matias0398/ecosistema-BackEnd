@@ -89,14 +89,11 @@ public class ProveedorControlador {
 	
 	@GetMapping("/buscarPorCategoria/{categoriaId}")
     public ResponseEntity<List<Proveedor>> buscarProveedoresPorCategoria(@PathVariable Long categoriaId) {
-        try {
-            List<Proveedor> proveedores = proveedorServicio.buscarPorCategoriaId(categoriaId);
-            if (proveedores.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return ResponseEntity.ok(proveedores);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+		return ResponseEntity.ok(proveedorServicio.buscarPorCategoriaId(categoriaId));
     }
+	
+	@GetMapping
+	public ResponseEntity<List<Proveedor>> mostrarProveedorActivo(){
+		return ResponseEntity.ok(proveedorServicio.mostrarProveedoresActivos());
+	}
 }

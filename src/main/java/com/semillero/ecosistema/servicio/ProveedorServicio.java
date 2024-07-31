@@ -2,6 +2,7 @@ package com.semillero.ecosistema.servicio;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -146,6 +147,21 @@ public class ProveedorServicio {
 	}
 	
 	public List<Proveedor> buscarPorCategoriaId(Long categoriaId) {
-        return proveedorRepositorio.findByCategoriaId(categoriaId);
+		
+		List<Proveedor> proveedorActivo=proveedorRepositorio.findAll();
+		
+		return proveedorActivo.stream().filter(proveedor -> EstadoProveedor.ACEPTADO.equals(proveedor.getEstado()) && !proveedor.isDeleted() && categoriaId.equals(proveedor.getCategoria().getId()))
+									   .collect(Collectors.toList());
     }
+	
+	public List<Proveedor>mostrarProveedoresActivos(){
+		
+		List<Proveedor> proveedorActivo=proveedorRepositorio.findAll();
+		
+		return proveedorActivo.stream().filter(proveedor -> EstadoProveedor.ACEPTADO.equals(proveedor.getEstado()) && !proveedor.isDeleted())
+									   .collect(Collectors.toList());
+			
+	}
+	
+	
 }
