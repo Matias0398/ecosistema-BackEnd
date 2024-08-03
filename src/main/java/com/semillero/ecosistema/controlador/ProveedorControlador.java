@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
 import com.semillero.ecosistema.dto.ProveedorDto;
+import com.semillero.ecosistema.dto.RevisionDto;
 import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.servicio.ProveedorServicio;
 
@@ -94,5 +95,18 @@ public class ProveedorControlador {
 	@GetMapping("/mostrarProveedorActivo")
 	public ResponseEntity<List<Proveedor>> mostrarProveedorActivo(){
 		return ResponseEntity.ok(proveedorServicio.mostrarProveedoresActivos());
+	}
+	
+	@PreAuthorize("hasrole('ADMIN')")
+	@GetMapping("/nuevoProveedor")
+	public ResponseEntity<List<Proveedor>>mostrarProveedorNuevo(){
+		return ResponseEntity.ok(proveedorServicio.mostrarProveedorNuevo());
+	}
+	
+	@PreAuthorize("hasrole('ADMIN')")
+	@PutMapping("/editarEstado/{id}")
+	public ResponseEntity<?>editarEstado(@PathVariable Long id,@RequestBody RevisionDto revisionDto){
+		Proveedor nuevoEstado=proveedorServicio.administrarProveedor(id, revisionDto.getEstado(), revisionDto.getFeedback());
+		return ResponseEntity.ok(nuevoEstado);
 	}
 }

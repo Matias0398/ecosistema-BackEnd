@@ -194,5 +194,16 @@ public class ProveedorServicio {
 			
 	}
 	
+	public List<Proveedor>mostrarProveedorNuevo(){
+		List<Proveedor>proveedorNuevo=proveedorRepositorio.findAll();
+		return proveedorNuevo.stream().filter(proveedor -> EstadoProveedor.REVISION_INICIAL.equals(proveedor.getEstado()) || EstadoProveedor.REQUIERE_CAMBIOS.equals(proveedor.getEstado()) && !proveedor.isDeleted())
+									  .collect(Collectors.toList());
+	}
 	
+	public Proveedor administrarProveedor(Long id,Proveedor.EstadoProveedor estado,String feedback) {
+		Proveedor proveedor=proveedorRepositorio.findById(id).orElseThrow(()-> new RuntimeException("Proveedor no encontrado"));
+		proveedor.setEstado(estado);
+		proveedor.setFeedback(feedback);
+		return proveedorRepositorio.save(proveedor);
+	}
 }
