@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
 import com.semillero.ecosistema.dto.ProveedorDto;
+import com.semillero.ecosistema.dto.RevisionDto;
 import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.servicio.ProveedorServicio;
 
@@ -57,19 +58,16 @@ public class ProveedorControlador {
 	}
 	
 	@PreAuthorize("hasRole('USUARIO')")
-	@PutMapping(value = "/editarProveedor/usuario/{usuarioId}/proveedor/{proveedorId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}", consumes = "multipart/form-data")
+	@PutMapping(value = "/editarProveedor/usuario/{usuarioId}/proveedor/{proveedorId}", consumes = "multipart/form-data")
 	public ResponseEntity<?> editarProveedor(
 	        @PathVariable Long usuarioId,
 	        @PathVariable Long proveedorId,
-	        @PathVariable Long paisId,
-	        @PathVariable Long provinciaId,
-	        @PathVariable Long categoriaId,
 	        @ModelAttribute ProveedorDto proveedorDto,
 	        @RequestPart("imagenes") List<MultipartFile> files) {
 
 	    try {
 	        // Llamar al servicio para editar el proveedor
-	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId, proveedorId, proveedorDto, paisId, provinciaId, categoriaId, files);
+	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId,proveedorId, proveedorDto,  files);
 	        return ResponseEntity.ok(proveedorActualizado);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -99,5 +97,18 @@ public class ProveedorControlador {
 	@GetMapping("/mostrarProveedorActivo")
 	public ResponseEntity<List<Proveedor>> mostrarProveedorActivo(){
 		return ResponseEntity.ok(proveedorServicio.mostrarProveedoresActivos());
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/nuevoProveedor")
+	public ResponseEntity<List<Proveedor>>mostrarProveedorNuevo(){
+		return ResponseEntity.ok(proveedorServicio.mostrarProveedorNuevo());
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/editarEstado/{id}")
+	public ResponseEntity<?>editarEstado(@PathVariable Long id,@RequestBody RevisionDto revisionDto){
+		Proveedor nuevoEstado=proveedorServicio.administrarProveedor(id, revisionDto.getEstado(), revisionDto.getFeedback());
+		return ResponseEntity.ok(nuevoEstado);
 	}
 }
