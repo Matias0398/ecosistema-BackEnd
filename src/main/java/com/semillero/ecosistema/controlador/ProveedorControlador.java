@@ -94,13 +94,13 @@ public class ProveedorControlador {
 		return ResponseEntity.ok(proveedorServicio.mostrarProveedoresActivos());
 	}
 	
-	@PreAuthorize("hasrole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/nuevoProveedor")
 	public ResponseEntity<List<Proveedor>>mostrarProveedorNuevo(){
 		return ResponseEntity.ok(proveedorServicio.mostrarProveedorNuevo());
 	}
 	
-	@PreAuthorize("hasrole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/editarEstado/{id}")
 	public ResponseEntity<?>editarEstado(@PathVariable Long id,@RequestBody RevisionDto revisionDto){
 		Proveedor nuevoEstado=proveedorServicio.administrarProveedor(id, revisionDto.getEstado(), revisionDto.getFeedback());
