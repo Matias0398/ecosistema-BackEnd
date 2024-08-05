@@ -84,6 +84,11 @@ public class ProveedorControlador {
 		}
 	}
 	
+	@GetMapping("/mostrarTodo")
+	public ResponseEntity<List<Proveedor>>mostrarTodo(){
+		return ResponseEntity.ok(proveedorServicio.mostrarTodo());
+	}
+	
 	@GetMapping("/buscarPorCategoria/{categoriaId}")
     public ResponseEntity<List<Proveedor>> buscarProveedoresPorCategoria(@PathVariable Long categoriaId) {
 		return ResponseEntity.ok(proveedorServicio.buscarPorCategoriaId(categoriaId));
