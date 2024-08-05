@@ -1,5 +1,7 @@
 package com.semillero.ecosistema.servicio;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +44,15 @@ public class ImagenServicioImpl {
                 .orElseThrow(() -> new Exception("Imagen no encontrada"));
     }
     
-    public void eliminarImagen(Imagen imagen) {
+    public void eliminarImagen(Long imagenId) throws Exception {
+        if (imagenId == null) {
+            throw new IllegalArgumentException("El ID de la imagen no puede ser nulo.");
+        }
+
+        // Verificar si la imagen existe antes de intentar eliminarla
+        Imagen imagen = imagenRepositorio.findById(imagenId)
+                .orElseThrow(() -> new NoSuchElementException("Imagen con ID " + imagenId + " no encontrada."));
+
         imagenRepositorio.delete(imagen);
     }
 }

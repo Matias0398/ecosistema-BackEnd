@@ -58,19 +58,16 @@ public class ProveedorControlador {
 	}
 	
 	@PreAuthorize("hasRole('USUARIO')")
-	@PutMapping(value = "/editarProveedor/usuario/{usuarioId}/proveedor/{proveedorId}/pais/{paisId}/provincia/{provinciaId}/categoria/{categoriaId}", consumes = "multipart/form-data")
+	@PutMapping(value = "/editarProveedor/usuario/{usuarioId}/proveedor/{proveedorId}", consumes = "multipart/form-data")
 	public ResponseEntity<?> editarProveedor(
 	        @PathVariable Long usuarioId,
 	        @PathVariable Long proveedorId,
-	        @PathVariable Long paisId,
-	        @PathVariable Long provinciaId,
-	        @PathVariable Long categoriaId,
 	        @ModelAttribute ProveedorDto proveedorDto,
 	        @RequestPart("imagenes") List<MultipartFile> files) {
 
 	    try {
 	        // Llamar al servicio para editar el proveedor
-	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId, proveedorId, proveedorDto, paisId, provinciaId, categoriaId, files);
+	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId,proveedorId, proveedorDto,  files);
 	        return ResponseEntity.ok(proveedorActualizado);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
