@@ -1,8 +1,6 @@
 package com.semillero.ecosistema.entidad;
 
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,12 +16,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoriaChatBot {
-
+public class Respuesta {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank(message = "El nombre no puede estar en blanco")
-	private String nombre;
+	@NotBlank(message = "El texto no puede estar en blanco")
+	@Column(columnDefinition = "VARCHAR(500)")
+	private String titulo;
+	
 }

@@ -1,13 +1,15 @@
 package com.semillero.ecosistema.entidad;
 
-import jakarta.persistence.CascadeType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +21,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RespuestaChatBot {
+public class Pregunta {
+
+	public enum EstadoPregunta {
+		REVISION_INICIAL,
+        RESUELTA
+	}
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +34,15 @@ public class RespuestaChatBot {
 	
 	@NotBlank(message = "El texto no puede estar en blanco")
 	@Column(columnDefinition = "VARCHAR(500)")
-	private String texto;
+	private String titulo;
 	
-	@OneToOne(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "id.pregunta")
-	private PreguntaChatBot pregunta;
+	@Enumerated(EnumType.STRING)
+	private EstadoPregunta estado;
+	
+	@ManyToOne
+	@JoinColumn(name= "id.usuario")
+	private Usuario usuarioCreador;
+	
+	
+	
 }
