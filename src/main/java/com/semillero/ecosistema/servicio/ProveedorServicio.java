@@ -194,5 +194,10 @@ public class ProveedorServicio {
 			
 	}
 	
+	public List<Proveedor>mostrarTodo(){
+		List<Proveedor> proveedor=proveedorRepositorio.findAll();
+		return proveedor;
+	}
+	
 	
 }
