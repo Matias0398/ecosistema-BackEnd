@@ -20,21 +20,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors().and() // Habilitar CORS usando la configuración proporcionada por CorsConfig
-            .csrf().disable()
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/auth/login", "/auth/registro", "/pregunta").permitAll() // Permitir acceso libre a estos endpoints
-                .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
-                .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**", "/publicaciones","/nuevoProveedor","/editarEstado/**").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
-                .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
-                .requestMatchers("/crearProveedor/**", "/editarProveedor/**").hasRole("USUARIO")
-                .requestMatchers("/buscarPorCategoria/**", "/mostrarProveedorActivo","/mostrarTodo").permitAll()
-                .requestMatchers("/categorias/**", "/ubicacion/**").permitAll()
-                .anyRequest().authenticated() // Asegura que todas las demás solicitudes estén autenticadas
-            )
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .addFilterBefore(new JwtAuthenticationFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .cors().and() // Habilitar CORS usando la configuración proporcionada por CorsConfig
+                .csrf().disable()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/auth/login", "/auth/registro", "/pregunta").permitAll() // Permitir acceso libre a estos endpoints
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
+                        .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**", "/publicaciones","/nuevoProveedor","/editarEstado/**").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
+                        .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
+                        .requestMatchers("/crearProveedor/**", "/editarProveedor/**", "/buscarPorId/**").hasRole("USUARIO")
+                        .requestMatchers("/buscarPorCategoria/**", "/mostrarProveedorActivo","/mostrarTodo").permitAll()
+                        .requestMatchers("/categorias/**", "/ubicacion/**").permitAll()
+                        .requestMatchers("/error").anonymous() // Permitir acceso anónimo a /error
+                        .anyRequest().authenticated() // Asegura que todas las demás solicitudes estén autenticadas
+                )
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

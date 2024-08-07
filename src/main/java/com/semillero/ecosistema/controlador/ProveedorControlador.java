@@ -88,6 +88,11 @@ public class ProveedorControlador {
 	public ResponseEntity<List<Proveedor>>mostrarTodo(){
 		return ResponseEntity.ok(proveedorServicio.mostrarTodo());
 	}
+
+	@GetMapping("/buscarPorId/{proveedorId}")
+	public ResponseEntity<Proveedor> buscarProveedorPorId(@PathVariable Long proveedorId) throws Exception {
+		return ResponseEntity.ok(proveedorServicio.buscarProveedorPorId(proveedorId));
+	}
 	
 	@GetMapping("/buscarPorCategoria/{categoriaId}")
     public ResponseEntity<List<Proveedor>> buscarProveedoresPorCategoria(@PathVariable Long categoriaId) {
