@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
 import com.semillero.ecosistema.dto.ProveedorDto;
+import com.semillero.ecosistema.dto.StatusDto;
 import com.semillero.ecosistema.entidad.Categoria;
 import com.semillero.ecosistema.entidad.Imagen;
 import com.semillero.ecosistema.entidad.Pais;
@@ -278,4 +279,19 @@ public class ProveedorServicio {
 		proveedor.setFeedback(feedback);
 		return proveedorRepositorio.save(proveedor);
 	}
+	
+	public List<StatusDto> misEstados (Usuario usuarioCreador) {
+		List <Proveedor> proveedores = proveedorRepositorio.findByUsuario(usuarioCreador);
+		
+		List<StatusDto> misEstados = new ArrayList<StatusDto>();
+		
+		for (Proveedor proveedor : proveedores){
+			StatusDto proveedorStatus = new StatusDto();
+			proveedorStatus.setEstado(proveedor.getEstado());
+			proveedorStatus.setFeedback(proveedor.getFeedback());
+			proveedorStatus.setId(proveedor.getId());
+			misEstados.add(proveedorStatus);
+		}
+		return misEstados;
+}
 }
