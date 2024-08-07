@@ -124,7 +124,7 @@ public class ProveedorServicio {
         return proveedorRepositorio.save(proveedornuevo);
     }
 	
-	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles, List<MultipartFile> files) throws Exception {
+	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles) throws Exception {
 	    // Buscar el proveedor por ID
 	    Proveedor proveedor = proveedorRepositorio.findById(proveedorId)
 	            .orElseThrow(() -> new Exception("Proveedor no encontrado"));
@@ -172,57 +172,57 @@ public class ProveedorServicio {
 	            throw new Exception("No se encontró una provincia con el ID: " + proveedorDetalles.getProvinciaId());
 	        }
 	    }
-	    // Obtener imágenes existentes
-	    List<Imagen> imagenesExistentes = new ArrayList<>(proveedor.getImagenes());
-
-	    // Procesar nuevas imágenes
-	    List<Imagen> imagenesNuevas = procesarImagenes(files, proveedor);
-
-	    // Eliminar imágenes antiguas que no están en la lista de nuevas imágenes
-	    eliminarImagenesNoUsadas(imagenesExistentes, imagenesNuevas);
-
-	    // Actualizar las imágenes del proveedor
-	    proveedor.getImagenes().clear();
-	    proveedor.getImagenes().addAll(imagenesNuevas);
+//	    // Obtener imágenes existentes
+//	    List<Imagen> imagenesExistentes = new ArrayList<>(proveedor.getImagenes());
+//
+//	    // Procesar nuevas imágenes
+//	    List<Imagen> imagenesNuevas = procesarImagenes(files, proveedor);
+//
+//	    // Eliminar imágenes antiguas que no están en la lista de nuevas imágenes
+//	    eliminarImagenesNoUsadas(imagenesExistentes, imagenesNuevas);
+//
+//	    // Actualizar las imágenes del proveedor
+//	    proveedor.getImagenes().clear();
+//	    proveedor.getImagenes().addAll(imagenesNuevas);
 
 	    return proveedorRepositorio.save(proveedor);
 	}
 
-	private List<Imagen> procesarImagenes(List<MultipartFile> files, Proveedor proveedor) throws Exception {
-	    List<Imagen> listaImagenes = new ArrayList<>();
-	    for (MultipartFile file : files) {
-	        if (file != null && !file.isEmpty()) {
-	            ImageModel imageModel = new ImageModel();
-	            imageModel.setFile(file);
-	            imageModel.setNombre(file.getOriginalFilename());
-
-	            Imagen imagen = imagenServicioImpl.crearImagen(imageModel);
-	            if (imagen != null) {
-	                imagen.setProveedor(proveedor);
-	                listaImagenes.add(imagen);
-	            }
-	        }
-	    }
-	    return listaImagenes;
-	}
-
-	private void eliminarImagenesNoUsadas(List<Imagen> imagenesExistentes, List<Imagen> imagenesNuevas) throws Exception {
-	    // Crear un conjunto de IDs de las nuevas imágenes para fácil referencia
-	    Set<Long> idsNuevas = imagenesNuevas.stream()
-	            .map(Imagen::getId)
-	            .filter(Objects::nonNull)
-	            .collect(Collectors.toSet());
-
-	    // Filtrar imágenes que no están en la lista de nuevas imágenes
-	    List<Imagen> imagenesAEliminar = imagenesExistentes.stream()
-	            .filter(imagen -> !idsNuevas.contains(imagen.getId()))
-	            .collect(Collectors.toList());
-
-	    // Eliminar imágenes no usadas
-	    for (Imagen imagenAEliminar : imagenesAEliminar) {
-	        imagenServicioImpl.eliminarImagen(imagenAEliminar.getId());
-	    }
-	}
+//	private List<Imagen> procesarImagenes(List<MultipartFile> files, Proveedor proveedor) throws Exception {
+//	    List<Imagen> listaImagenes = new ArrayList<>();
+//	    for (MultipartFile file : files) {
+//	        if (file != null && !file.isEmpty()) {
+//	            ImageModel imageModel = new ImageModel();
+//	            imageModel.setFile(file);
+//	            imageModel.setNombre(file.getOriginalFilename());
+//
+//	            Imagen imagen = imagenServicioImpl.crearImagen(imageModel);
+//	            if (imagen != null) {
+//	                imagen.setProveedor(proveedor);
+//	                listaImagenes.add(imagen);
+//	            }
+//	        }
+//	    }
+//	    return listaImagenes;
+//	}
+//
+//	private void eliminarImagenesNoUsadas(List<Imagen> imagenesExistentes, List<Imagen> imagenesNuevas) throws Exception {
+//	    // Crear un conjunto de IDs de las nuevas imágenes para fácil referencia
+//	    Set<Long> idsNuevas = imagenesNuevas.stream()
+//	            .map(Imagen::getId)
+//	            .filter(Objects::nonNull)
+//	            .collect(Collectors.toSet());
+//
+//	    // Filtrar imágenes que no están en la lista de nuevas imágenes
+//	    List<Imagen> imagenesAEliminar = imagenesExistentes.stream()
+//	            .filter(imagen -> !idsNuevas.contains(imagen.getId()))
+//	            .collect(Collectors.toList());
+//
+//	    // Eliminar imágenes no usadas
+//	    for (Imagen imagenAEliminar : imagenesAEliminar) {
+//	        imagenServicioImpl.eliminarImagen(imagenAEliminar.getId());
+//	    }
+//	}
 
 	
 	public List<Proveedor>buscarPorNombre(String query){

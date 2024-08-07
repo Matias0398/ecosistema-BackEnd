@@ -62,12 +62,11 @@ public class ProveedorControlador {
 	public ResponseEntity<?> editarProveedor(
 	        @PathVariable Long usuarioId,
 	        @PathVariable Long proveedorId,
-	        @ModelAttribute ProveedorDto proveedorDto,
-	        @RequestPart("imagenes") List<MultipartFile> files) {
+	        @ModelAttribute ProveedorDto proveedorDto) {
 
 	    try {
 	        // Llamar al servicio para editar el proveedor
-	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId,proveedorId, proveedorDto,  files);
+	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId,proveedorId, proveedorDto);
 	        return ResponseEntity.ok(proveedorActualizado);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
