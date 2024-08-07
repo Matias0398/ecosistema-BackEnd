@@ -265,4 +265,9 @@ public class ProveedorServicio {
 		proveedor.setFeedback(feedback);
 		return proveedorRepositorio.save(proveedor);
 	}
+	
+	public List<Proveedor> misProveedores(Usuario usuarioCreador) {
+		List <Proveedor> proveedores = proveedorRepositorio.findByUsuario(usuarioCreador);
+		return proveedores;
+	}
 }

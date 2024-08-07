@@ -23,7 +23,9 @@ import com.semillero.ecosistema.cloudinary.dto.ImageModel;
 import com.semillero.ecosistema.dto.ProveedorDto;
 import com.semillero.ecosistema.dto.RevisionDto;
 import com.semillero.ecosistema.entidad.Proveedor;
+import com.semillero.ecosistema.entidad.Usuario;
 import com.semillero.ecosistema.servicio.ProveedorServicio;
+import com.semillero.ecosistema.servicio.UsuarioServicioImpl;
 
 @RestController
 @RequestMapping
@@ -31,6 +33,9 @@ public class ProveedorControlador {
 
 	@Autowired
 	private ProveedorServicio proveedorServicio;
+	
+	@Autowired
+	private UsuarioServicioImpl usuarioServicio;
 	
 	@PreAuthorize("hasRole('USUARIO')")
 	@PostMapping(value="/crearProveedor/usuario/{usuarioId}",consumes = "multipart/form-data")
@@ -110,5 +115,17 @@ public class ProveedorControlador {
 	public ResponseEntity<?>editarEstado(@PathVariable Long id,@RequestBody RevisionDto revisionDto){
 		Proveedor nuevoEstado=proveedorServicio.administrarProveedor(id, revisionDto.getEstado(), revisionDto.getFeedback());
 		return ResponseEntity.ok(nuevoEstado);
+	}
+	
+	@PreAuthorize("hasRole('USUARIO')")
+	@GetMapping("/misProveedores/{usuarioId}")
+	public ResponseEntity<?> misProveedores(@PathVariable Long usuarioId) {
+		Usuario usuarioCreador = usuarioServicio.buscarPorId(usuarioId);
+		if (usuarioCreador != null) {
+			return ResponseEntity.ok(proveedorServicio.misProveedores(usuarioCreador));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró ningún usuario con el id proporcionado");
+		}
+		
 	}
 }
