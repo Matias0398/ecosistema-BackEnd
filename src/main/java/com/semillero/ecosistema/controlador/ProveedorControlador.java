@@ -123,11 +123,11 @@ public class ProveedorControlador {
 	}
 	
 	@PreAuthorize("hasRole('USUARIO')")
-	@GetMapping("/misProveedores/{usuarioId}")
-	public ResponseEntity<?> misProveedores(@PathVariable Long usuarioId) {
+	@GetMapping("/misEstados/{usuarioId}")
+	public ResponseEntity<?> misEstados(@PathVariable Long usuarioId) {
 		Usuario usuarioCreador = usuarioServicio.buscarPorId(usuarioId);
 		if (usuarioCreador != null) {
-			return ResponseEntity.ok(proveedorServicio.misProveedores(usuarioCreador));
+			return ResponseEntity.ok(proveedorServicio.misEstados(usuarioCreador));
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró ningún usuario con el id proporcionado");
 		}
