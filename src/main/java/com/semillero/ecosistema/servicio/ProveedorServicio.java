@@ -228,6 +228,19 @@ public class ProveedorServicio {
 	public List<Proveedor>buscarPorNombre(String query){
 		return proveedorRepositorio.findByNombreContainingIgnoreCase(query);
 	}
+
+	public Proveedor buscarProveedorPorId(Long proveedorId) throws Exception {
+		// Buscar proveedor por ID
+		Proveedor proveedor = proveedorRepositorio.findById(proveedorId)
+				.orElseThrow(() -> new Exception("Proveedor no encontrado"));
+
+		// Verificar el estado del proveedor y si está eliminado
+		if (EstadoProveedor.ACEPTADO.equals(proveedor.getEstado()) && !proveedor.isDeleted()) {
+			return proveedor;
+		} else {
+			throw new Exception("Proveedor no encontrado o no está activo.");
+		}
+	}
 	
 	public List<Proveedor> buscarPorCategoriaId(Long categoriaId) {
 		
