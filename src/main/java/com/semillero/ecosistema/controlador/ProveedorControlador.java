@@ -72,6 +72,7 @@ public class ProveedorControlador {
 	    try {
 	        // Llamar al servicio para editar el proveedor
 	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId,proveedorId, proveedorDto);
+			System.out.println(proveedorActualizado.getNombre());
 	        return ResponseEntity.ok(proveedorActualizado);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
