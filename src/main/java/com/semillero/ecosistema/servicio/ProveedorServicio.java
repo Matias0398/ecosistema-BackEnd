@@ -145,7 +145,8 @@ public class ProveedorServicio {
 	    if (proveedorDetalles.getInstagram() != null) proveedor.setInstagram(proveedorDetalles.getInstagram());
 	    if (proveedorDetalles.getCiudad() != null) proveedor.setCiudad(proveedorDetalles.getCiudad());
 	    if (proveedorDetalles.getFeedback() != null) proveedor.setFeedback(proveedorDetalles.getFeedback());
-
+	    proveedor.setEstado(EstadoProveedor.REVISION_INICIAL);
+	    
 	    // Actualizar solo si se proporciona una nueva categoría, país o provincia
 	    if (proveedorDetalles.getCategoriaId() != null) {
 	        Optional<Categoria> categoriaOptional = categoriaRepository.findById(proveedorDetalles.getCategoriaId());
