@@ -237,7 +237,7 @@ public class ProveedorServicio {
 				.orElseThrow(() -> new Exception("Proveedor no encontrado"));
 
 		// Verificar el estado del proveedor y si está eliminado
-		if (EstadoProveedor.ACEPTADO.equals(proveedor.getEstado()) && !proveedor.isDeleted()) {
+		if (!proveedor.isDeleted()) {
 			return proveedor;
 		} else {
 			throw new Exception("Proveedor no encontrado o no está activo.");
