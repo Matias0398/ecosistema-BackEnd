@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.servicio;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,10 +22,12 @@ import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.entidad.Proveedor.EstadoProveedor;
 import com.semillero.ecosistema.entidad.Provincia;
 import com.semillero.ecosistema.entidad.Usuario;
+import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
 import com.semillero.ecosistema.repositorio.ICategoriaRepositorio;
 import com.semillero.ecosistema.repositorio.IPaisRepositorio;
 import com.semillero.ecosistema.repositorio.IProveedorRepositorio;
 import com.semillero.ecosistema.repositorio.IProvinciaRepositorio;
+import com.semillero.ecosistema.repositorio.IUsuarioRepositorio;
 
 @Service
 public class ProveedorServicio {
@@ -33,13 +36,10 @@ public class ProveedorServicio {
 	private IProveedorRepositorio proveedorRepositorio;
 	
 	@Autowired
-	private PaisProvinciaServiceImpl paisProvinciaServiceImpl;
-	
-	@Autowired
 	private UsuarioServicioImpl usuarioServicioImpl;
 	
 	@Autowired
-	private CategoriaServicioImpl categoriaServicioImpl;
+	private IUsuarioRepositorio usuarioRepositorio;
 	
 	@Autowired
 	private ImagenServicioImpl imagenServicioImpl;
@@ -52,6 +52,9 @@ public class ProveedorServicio {
 
 	@Autowired
 	private IProvinciaRepositorio provinciaRepository;
+	
+	@Autowired
+	private EmailCuerpoServicio emailCuerpoServicio;
 	    
 	private static final int maxProveedores=3;
 	
@@ -109,6 +112,7 @@ public class ProveedorServicio {
         proveedornuevo.setFeedback("Proveedor en revisión");
         proveedornuevo.setFacebook(proveedorDto.getFacebook());
         proveedornuevo.setInstagram(proveedorDto.getInstagram());
+        proveedornuevo.setFechaCreacion(LocalDateTime.now()	);
 
         List<Imagen> listaimagenes = new ArrayList<>();
         for (ImageModel imageModel : imageModels) {
@@ -125,7 +129,7 @@ public class ProveedorServicio {
         return proveedorRepositorio.save(proveedornuevo);
     }
 	
-	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles) throws Exception {
+	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles,List<MultipartFile> files) throws Exception {
 	    // Buscar el proveedor por ID
 	    Proveedor proveedor = proveedorRepositorio.findById(proveedorId)
 	            .orElseThrow(() -> new Exception("Proveedor no encontrado"));
@@ -174,57 +178,56 @@ public class ProveedorServicio {
 	            throw new Exception("No se encontró una provincia con el ID: " + proveedorDetalles.getProvinciaId());
 	        }
 	    }
-//	    // Obtener imágenes existentes
-//	    List<Imagen> imagenesExistentes = new ArrayList<>(proveedor.getImagenes());
-//
-//	    // Procesar nuevas imágenes
-//	    List<Imagen> imagenesNuevas = procesarImagenes(files, proveedor);
-//
-//	    // Eliminar imágenes antiguas que no están en la lista de nuevas imágenes
-//	    eliminarImagenesNoUsadas(imagenesExistentes, imagenesNuevas);
-//
-//	    // Actualizar las imágenes del proveedor
-//	    proveedor.getImagenes().clear();
-//	    proveedor.getImagenes().addAll(imagenesNuevas);
+	    // Obtener imágenes existentes
+	    List<Imagen> imagenesExistentes = new ArrayList<>(proveedor.getImagenes());
+
+	    // Procesar nuevas imágenes
+	    List<Imagen> imagenesNuevas = procesarImagenes(files, proveedor);
+
+	    // Eliminar imágenes antiguas que no están en la lista de nuevas imágenes
+	    eliminarImagenesNoUsadas(imagenesExistentes, imagenesNuevas);
+
+	    // Actualizar las imágenes del proveedor
+	    proveedor.getImagenes().clear();
+	    proveedor.getImagenes().addAll(imagenesNuevas);
 
 	    return proveedorRepositorio.save(proveedor);
 	}
+	private List<Imagen> procesarImagenes(List<MultipartFile> files, Proveedor proveedor) throws Exception {
+	    List<Imagen> listaImagenes = new ArrayList<>();
+	    for (MultipartFile file : files) {
+	        if (file != null && !file.isEmpty()) {
+	            ImageModel imageModel = new ImageModel();
+	            imageModel.setFile(file);
+	            imageModel.setNombre(file.getOriginalFilename());
 
-//	private List<Imagen> procesarImagenes(List<MultipartFile> files, Proveedor proveedor) throws Exception {
-//	    List<Imagen> listaImagenes = new ArrayList<>();
-//	    for (MultipartFile file : files) {
-//	        if (file != null && !file.isEmpty()) {
-//	            ImageModel imageModel = new ImageModel();
-//	            imageModel.setFile(file);
-//	            imageModel.setNombre(file.getOriginalFilename());
-//
-//	            Imagen imagen = imagenServicioImpl.crearImagen(imageModel);
-//	            if (imagen != null) {
-//	                imagen.setProveedor(proveedor);
-//	                listaImagenes.add(imagen);
-//	            }
-//	        }
-//	    }
-//	    return listaImagenes;
-//	}
-//
-//	private void eliminarImagenesNoUsadas(List<Imagen> imagenesExistentes, List<Imagen> imagenesNuevas) throws Exception {
-//	    // Crear un conjunto de IDs de las nuevas imágenes para fácil referencia
-//	    Set<Long> idsNuevas = imagenesNuevas.stream()
-//	            .map(Imagen::getId)
-//	            .filter(Objects::nonNull)
-//	            .collect(Collectors.toSet());
-//
-//	    // Filtrar imágenes que no están en la lista de nuevas imágenes
-//	    List<Imagen> imagenesAEliminar = imagenesExistentes.stream()
-//	            .filter(imagen -> !idsNuevas.contains(imagen.getId()))
-//	            .collect(Collectors.toList());
-//
-//	    // Eliminar imágenes no usadas
-//	    for (Imagen imagenAEliminar : imagenesAEliminar) {
-//	        imagenServicioImpl.eliminarImagen(imagenAEliminar.getId());
-//	    }
-//	}
+	            Imagen imagen = imagenServicioImpl.crearImagen(imageModel);
+	            if (imagen != null) {
+	                imagen.setProveedor(proveedor);
+	                listaImagenes.add(imagen);
+	            }
+	        }
+	    }
+	    return listaImagenes;
+	}
+
+	private void eliminarImagenesNoUsadas(List<Imagen> imagenesExistentes, List<Imagen> imagenesNuevas) throws Exception {
+	    // Crear un conjunto de IDs de las nuevas imágenes para fácil referencia
+	    Set<Long> idsNuevas = imagenesNuevas.stream()
+	            .map(Imagen::getId)
+	            .filter(Objects::nonNull)
+	            .collect(Collectors.toSet());
+
+	    // Filtrar imágenes que no están en la lista de nuevas imágenes
+	    List<Imagen> imagenesAEliminar = imagenesExistentes.stream()
+	            .filter(imagen -> !idsNuevas.contains(imagen.getId()))
+	            .collect(Collectors.toList());
+
+	    // Eliminar imágenes no usadas
+	    for (Imagen imagenAEliminar : imagenesAEliminar) {
+	        imagenServicioImpl.eliminarImagen(imagenAEliminar.getId());
+	    }
+	}
 
 	
 	public List<Proveedor>buscarPorNombre(String query){
@@ -276,6 +279,9 @@ public class ProveedorServicio {
 	
 	public Proveedor administrarProveedor(Long id,Proveedor.EstadoProveedor estado,String feedback) {
 		Proveedor proveedor=proveedorRepositorio.findById(id).orElseThrow(()-> new RuntimeException("Proveedor no encontrado"));
+		if(estado.equals(EstadoProveedor.ACEPTADO)) {			
+			proveedor.setFechaCreacion(LocalDateTime.now());
+		}
 		proveedor.setEstado(estado);
 		proveedor.setFeedback(feedback);
 		return proveedorRepositorio.save(proveedor);
@@ -283,7 +289,6 @@ public class ProveedorServicio {
 	
 	public List<StatusDto> misEstados (Usuario usuarioCreador) {
 		List <Proveedor> proveedores = proveedorRepositorio.findByUsuario(usuarioCreador);
-		
 		List<StatusDto> misEstados = new ArrayList<StatusDto>();
 		
 		for (Proveedor proveedor : proveedores){
@@ -294,5 +299,25 @@ public class ProveedorServicio {
 			misEstados.add(proveedorStatus);
 		}
 		return misEstados;
-}
+	}
+	
+	public List<Proveedor> obtenerProveedoresAceptadosUltimaSemana() {
+        LocalDateTime unaSemanaAtras = LocalDateTime.now().minusWeeks(1);
+        return proveedorRepositorio.findByEstadoAndDeletedFalseAndFechaCreacionAfter(
+                Proveedor.EstadoProveedor.ACEPTADO, 
+                unaSemanaAtras);
+    }
+	
+	public void enviarReporteSemanal() {
+		List<Proveedor> proveedoresNuevos=obtenerProveedoresAceptadosUltimaSemana();
+		
+		if(!proveedoresNuevos.isEmpty()) {
+			List<Usuario> todosLosUsuarios = usuarioRepositorio.findAll();
+			String cuerpoEmail=emailCuerpoServicio.generarCuerpoEmail(proveedoresNuevos);
+			for (Usuario usuario : todosLosUsuarios) {
+				if(usuario.getRol().equals(RolDeUsuario.USUARIO))
+				emailCuerpoServicio.enviarCorreo(usuario.getEmail(), "Nuevos Proveedores Aceptados de la Semana", cuerpoEmail);
+			}
+		}
+	}
 }
