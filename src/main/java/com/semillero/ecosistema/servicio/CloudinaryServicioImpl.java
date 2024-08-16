@@ -20,7 +20,7 @@ public class CloudinaryServicioImpl {
     public ImageUploadResult cargarImagen(MultipartFile file) {
         ImageUploadResult result = new ImageUploadResult();
         try {
-            Map uploadedFile = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            Map<String, Object> uploadedFile = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
             String publicId = (String) uploadedFile.get("public_id");
             String url = (String) uploadedFile.get("url");
             result.setPublicId(publicId);
@@ -30,5 +30,14 @@ public class CloudinaryServicioImpl {
             result = null;
         }
         return result;
+    }
+
+    public void eliminarImagen(String publicId) throws IOException {
+        try {
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("Error al eliminar la imagen con publicId: " + publicId, e);
+        }
     }
 }

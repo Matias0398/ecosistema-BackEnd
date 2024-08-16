@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
 import com.semillero.ecosistema.dto.ProveedorDto;
 import com.semillero.ecosistema.dto.RevisionDto;
+import com.semillero.ecosistema.entidad.Imagen;
 import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.entidad.Usuario;
+import com.semillero.ecosistema.servicio.ImagenServicioImpl;
 import com.semillero.ecosistema.servicio.ProveedorServicio;
 import com.semillero.ecosistema.servicio.UsuarioServicioImpl;
 
@@ -36,6 +39,9 @@ public class ProveedorControlador {
 	
 	@Autowired
 	private UsuarioServicioImpl usuarioServicio;
+	
+	@Autowired
+	private ImagenServicioImpl imagenServicioImpl;
 	
 	@PreAuthorize("hasRole('USUARIO')")
 	@PostMapping(value="/crearProveedor/usuario/{usuarioId}",consumes = "multipart/form-data")
@@ -70,15 +76,40 @@ public class ProveedorControlador {
 	        @ModelAttribute ProveedorDto proveedorDto) {
 
 	    try {
+			
 	        // Llamar al servicio para editar el proveedor
 	        Proveedor proveedorActualizado = proveedorServicio.editarProveedor(usuarioId,proveedorId, proveedorDto);
-			System.out.println(proveedorActualizado.getNombre());
 	        return ResponseEntity.ok(proveedorActualizado);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 	    }
 	}
 	
+	@PreAuthorize("hasRole('USUARIO')")
+	@DeleteMapping(value = "/eliminarImagen/{imagenId}")
+	public ResponseEntity<?> eliminarImagen(@PathVariable Long imagenId) {
+	    try {
+	        imagenServicioImpl.eliminarImagen(imagenId);
+	        return ResponseEntity.ok("Imagen eliminada correctamente");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	    }
+	}
+	
+	@PreAuthorize("hasRole('USUARIO')")
+    @PutMapping("/actualizar/{imagenId}")
+    public ResponseEntity<?> actualizarImagen(
+            @PathVariable Long imagenId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            // Llamar al servicio para actualizar la imagen
+            Imagen imagenActualizada = imagenServicioImpl.actualizarImagen(imagenId, file);
+            return ResponseEntity.ok(imagenActualizada);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 	@GetMapping("/buscar")
 	public ResponseEntity<List<Proveedor>>buscarProveedoresPorNombre(@RequestParam String query){
 		try {

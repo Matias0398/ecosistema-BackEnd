@@ -1,5 +1,9 @@
 package com.semillero.ecosistema.dto;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,5 +54,6 @@ public class ProveedorDto {
     private String feedback;
 
     private boolean deleted = false;
+
 
 }
