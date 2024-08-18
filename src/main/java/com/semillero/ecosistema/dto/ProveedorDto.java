@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,5 +51,6 @@ public class ProveedorDto {
     private String feedback;
 
     private boolean deleted = false;
+
 
 }
