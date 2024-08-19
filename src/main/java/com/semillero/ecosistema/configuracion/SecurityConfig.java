@@ -27,7 +27,9 @@ public class SecurityConfig {
                         .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
                         .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**", "/publicaciones","/nuevoProveedor","/editarEstado/**").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
                         .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
-                        .requestMatchers("/crearProveedor/**", "/editarProveedor/**", "misProveedores/**" ).hasRole("USUARIO")
+
+                        .requestMatchers("/crearProveedor/**", "/editarProveedor/**", "misProveedores/**","/eliminarImagen/**","/actualizar/**").hasRole("USUARIO")
+ //                       .requestMatchers("/buscarPorId/**").hasAnyRole("USUARIO","ADMIN")
                         .requestMatchers("/buscarPorCategoria/**", "/mostrarProveedorActivo","/mostrarTodo","/buscarPorId/**", "/proveedoresCercanos").permitAll()
                         .requestMatchers("/categorias/**", "/ubicacion/**").permitAll()
                         .requestMatchers("/error").anonymous() // Permitir acceso anónimo a /error

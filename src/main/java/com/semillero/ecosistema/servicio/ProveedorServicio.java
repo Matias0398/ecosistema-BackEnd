@@ -1,7 +1,12 @@
 package com.semillero.ecosistema.servicio;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
+
+import java.util.HashSet;
+import java.util.Iterator;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -137,118 +142,61 @@ public class ProveedorServicio {
 		return proveedorRepositorio.save(proveedornuevo);
 	}
 
-	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles)
-			throws Exception {
-		// Buscar el proveedor por ID
-		Proveedor proveedor = proveedorRepositorio.findById(proveedorId)
-				.orElseThrow(() -> new Exception("Proveedor no encontrado"));
+	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles) throws Exception {
+	    // Buscar el proveedor por ID
+	    Proveedor proveedor = proveedorRepositorio.findById(proveedorId)
+	            .orElseThrow(() -> new Exception("Proveedor no encontrado"));
 
-		// Verificar permisos del usuario
-		if (!proveedor.getUsuario().getId().equals(usuarioId)) {
-			throw new Exception("No tiene permiso para editar este proveedor.");
-		}
+	    // Verificar permisos del usuario
+	    if (!proveedor.getUsuario().getId().equals(usuarioId)) {
+	        throw new Exception("No tiene permiso para editar este proveedor.");
+	    }
 
-		// Actualizar datos del proveedor solo si están presentes en el DTO
-		if (proveedorDetalles.getNombre() != null)
-			proveedor.setNombre(proveedorDetalles.getNombre());
-		if (proveedorDetalles.getTipoProveedor() != null)
-			proveedor.setTipoProveedor(proveedorDetalles.getTipoProveedor());
-		if (proveedorDetalles.getDescripcion() != null)
-			proveedor.setDescripcion(proveedorDetalles.getDescripcion());
-		if (proveedorDetalles.getTelefono() != null)
-			proveedor.setTelefono(proveedorDetalles.getTelefono());
-		if (proveedorDetalles.getEmail() != null)
-			proveedor.setEmail(proveedorDetalles.getEmail());
-		if (proveedorDetalles.getFacebook() != null)
-			proveedor.setFacebook(proveedorDetalles.getFacebook());
-		if (proveedorDetalles.getInstagram() != null)
-			proveedor.setInstagram(proveedorDetalles.getInstagram());
-		if (proveedorDetalles.getCiudad() != null)
-			proveedor.setCiudad(proveedorDetalles.getCiudad());
-		if (proveedorDetalles.getFeedback() != null)
-			proveedor.setFeedback(proveedorDetalles.getFeedback());
-		proveedor.setEstado(EstadoProveedor.REVISION_INICIAL);
+	    // Actualizar datos del proveedor solo si están presentes en el DTO
+	    if (proveedorDetalles.getNombre() != null) proveedor.setNombre(proveedorDetalles.getNombre());
+	    if (proveedorDetalles.getTipoProveedor() != null) proveedor.setTipoProveedor(proveedorDetalles.getTipoProveedor());
+	    if (proveedorDetalles.getDescripcion() != null) proveedor.setDescripcion(proveedorDetalles.getDescripcion());
+	    if (proveedorDetalles.getTelefono() != null) proveedor.setTelefono(proveedorDetalles.getTelefono());
+	    if (proveedorDetalles.getEmail() != null) proveedor.setEmail(proveedorDetalles.getEmail());
+	    if (proveedorDetalles.getFacebook() != null) proveedor.setFacebook(proveedorDetalles.getFacebook());
+	    if (proveedorDetalles.getInstagram() != null) proveedor.setInstagram(proveedorDetalles.getInstagram());
+	    if (proveedorDetalles.getCiudad() != null) proveedor.setCiudad(proveedorDetalles.getCiudad());
+	    if (proveedorDetalles.getFeedback() != null) proveedor.setFeedback(proveedorDetalles.getFeedback());
+	    proveedor.setEstado(EstadoProveedor.REVISION_INICIAL);
+	    
+	    // Actualizar solo si se proporciona una nueva categoría, país o provincia
+	    if (proveedorDetalles.getCategoriaId() != null) {
+	        Optional<Categoria> categoriaOptional = categoriaRepository.findById(proveedorDetalles.getCategoriaId());
+	        if (categoriaOptional.isPresent()) {
+	            proveedor.setCategoria(categoriaOptional.get());
+	        } else {
+	            throw new Exception("No se encontró una categoría con el ID: " + proveedorDetalles.getCategoriaId());
+	        }
+	    }
 
-		// Actualizar solo si se proporciona una nueva categoría, país o provincia
-		if (proveedorDetalles.getCategoriaId() != null) {
-			Optional<Categoria> categoriaOptional = categoriaRepository.findById(proveedorDetalles.getCategoriaId());
-			if (categoriaOptional.isPresent()) {
-				proveedor.setCategoria(categoriaOptional.get());
-			} else {
-				throw new Exception("No se encontró una categoría con el ID: " + proveedorDetalles.getCategoriaId());
-			}
-		}
+	    if (proveedorDetalles.getPaisId() != null) {
+	        Optional<Pais> paisOptional = paisRepository.findById(proveedorDetalles.getPaisId());
+	        if (paisOptional.isPresent()) {
+	            proveedor.setPais(paisOptional.get());
+	        } else {
+	            throw new Exception("No se encontró un país con el ID: " + proveedorDetalles.getPaisId());
+	        }
+	    }
 
-		if (proveedorDetalles.getPaisId() != null) {
-			Optional<Pais> paisOptional = paisRepository.findById(proveedorDetalles.getPaisId());
-			if (paisOptional.isPresent()) {
-				proveedor.setPais(paisOptional.get());
-			} else {
-				throw new Exception("No se encontró un país con el ID: " + proveedorDetalles.getPaisId());
-			}
-		}
-
-		if (proveedorDetalles.getProvinciaId() != null) {
-			Optional<Provincia> provinciaOptional = provinciaRepository.findById(proveedorDetalles.getProvinciaId());
-			if (provinciaOptional.isPresent()) {
-				proveedor.setProvincia(provinciaOptional.get());
-			} else {
-				throw new Exception("No se encontró una provincia con el ID: " + proveedorDetalles.getProvinciaId());
-			}
-		}
-//	    // Obtener imágenes existentes
-//	    List<Imagen> imagenesExistentes = new ArrayList<>(proveedor.getImagenes());
-//
-//	    // Procesar nuevas imágenes
-//	    List<Imagen> imagenesNuevas = procesarImagenes(files, proveedor);
-//
-//	    // Eliminar imágenes antiguas que no están en la lista de nuevas imágenes
-//	    eliminarImagenesNoUsadas(imagenesExistentes, imagenesNuevas);
-//
-//	    // Actualizar las imágenes del proveedor
-//	    proveedor.getImagenes().clear();
-//	    proveedor.getImagenes().addAll(imagenesNuevas);
-
-		return proveedorRepositorio.save(proveedor);
+	    if (proveedorDetalles.getProvinciaId() != null) {
+	        Optional<Provincia> provinciaOptional = provinciaRepository.findById(proveedorDetalles.getProvinciaId());
+	        if (provinciaOptional.isPresent()) {
+	            proveedor.setProvincia(provinciaOptional.get());
+	        } else {
+	            throw new Exception("No se encontró una provincia con el ID: " + proveedorDetalles.getProvinciaId());
+	        }
+	    }
+	   
+	    return proveedorRepositorio.save(proveedor);
 	}
 
-//	private List<Imagen> procesarImagenes(List<MultipartFile> files, Proveedor proveedor) throws Exception {
-//	    List<Imagen> listaImagenes = new ArrayList<>();
-//	    for (MultipartFile file : files) {
-//	        if (file != null && !file.isEmpty()) {
-//	            ImageModel imageModel = new ImageModel();
-//	            imageModel.setFile(file);
-//	            imageModel.setNombre(file.getOriginalFilename());
-//
-//	            Imagen imagen = imagenServicioImpl.crearImagen(imageModel);
-//	            if (imagen != null) {
-//	                imagen.setProveedor(proveedor);
-//	                listaImagenes.add(imagen);
-//	            }
-//	        }
-//	    }
-//	    return listaImagenes;
-//	}
-//
-//	private void eliminarImagenesNoUsadas(List<Imagen> imagenesExistentes, List<Imagen> imagenesNuevas) throws Exception {
-//	    // Crear un conjunto de IDs de las nuevas imágenes para fácil referencia
-//	    Set<Long> idsNuevas = imagenesNuevas.stream()
-//	            .map(Imagen::getId)
-//	            .filter(Objects::nonNull)
-//	            .collect(Collectors.toSet());
-//
-//	    // Filtrar imágenes que no están en la lista de nuevas imágenes
-//	    List<Imagen> imagenesAEliminar = imagenesExistentes.stream()
-//	            .filter(imagen -> !idsNuevas.contains(imagen.getId()))
-//	            .collect(Collectors.toList());
-//
-//	    // Eliminar imágenes no usadas
-//	    for (Imagen imagenAEliminar : imagenesAEliminar) {
-//	        imagenServicioImpl.eliminarImagen(imagenAEliminar.getId());
-//	    }
-//	}
-
-	public List<Proveedor> buscarPorNombre(String query) {
+	
+	public List<Proveedor>buscarPorNombre(String query){
 		return proveedorRepositorio.findByNombreContainingIgnoreCase(query);
 	}
 
