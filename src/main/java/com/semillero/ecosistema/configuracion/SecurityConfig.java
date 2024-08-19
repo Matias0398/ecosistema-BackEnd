@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/login", "/auth/registro", "/pregunta").permitAll() // Permitir acceso libre a estos endpoints
-                        .requestMatchers("/usuarios/**","/estadisticasProveedores","/proveedoresPorCategoria").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
+                        .requestMatchers("/usuarios/**","/estadisticasProveedores","/proveedoresPorCategoria","/visualizaciones").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
                         .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**", "/publicaciones","/nuevoProveedor","/editarEstado/**").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
                         .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
                         .requestMatchers("/crearProveedor/**", "/editarProveedor/**", "misProveedores/**","/eliminarImagen/**","/actualizar/**").hasRole("USUARIO")

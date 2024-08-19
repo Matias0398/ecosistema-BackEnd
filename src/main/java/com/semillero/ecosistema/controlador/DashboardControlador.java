@@ -3,6 +3,7 @@ package com.semillero.ecosistema.controlador;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,21 +29,30 @@ public class DashboardControlador {
         Map<String, Long> estadisticas = new HashMap<>();
         estadisticas.put("aceptados", dashboardServicio.proveedoresAceptados());
         estadisticas.put("enRevision", dashboardServicio.proveedoresEnEspera());
-        estadisticas.put("denegados", dashboardServicio.proveedoresDenegador());
+        estadisticas.put("denegados", dashboardServicio.proveedoresDenegados());
         estadisticas.put("total", dashboardServicio.proveedorTotal());
 
         return estadisticas;
     }
 	
 	@GetMapping("/proveedoresPorCategoria")
-    public Map<String, Long> obtenerEstadisticasPorCategoria() {
-        Map<String, Long> estadisticas = new HashMap<>();
-        List<Categoria> categorias = categoriaRepositorio.findAll();
-        for (Categoria categoria : categorias) {
-            estadisticas.put(categoria.getNombre(), dashboardServicio.contarProveedoresPorCategoria(categoria));
-        }
-        return estadisticas;
-    }
+	public Map<String, Long> obtenerEstadisticasPorCategoria() {
+	    Map<String, Long> estadisticas = new HashMap<>();
+	    List<Categoria> categorias = categoriaRepositorio.findAll();
+	    
+	    for (Categoria categoria : categorias) {
+	        estadisticas.put(categoria.getNombre(), dashboardServicio.contarProveedoresPorCategoria(categoria));
+	    }
+	    
+	    // Ordenar el mapa por claves (nombres de categorías)
+	    Map<String, Long> sortedEstadisticas = new TreeMap<>(estadisticas);
+
+	    return sortedEstadisticas;
+	}
 	
+	 @GetMapping("/visualizaciones")
+	    public Map<Long, Integer> obtenerVisualizacionesDeTodas() {
+	        return dashboardServicio.obtenerVisualizacionesDeTodasLasPublicaciones();
+	    }
 	
 }

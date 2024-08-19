@@ -1,11 +1,17 @@
 package com.semillero.ecosistema.servicio;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.semillero.ecosistema.entidad.Categoria;
 import com.semillero.ecosistema.entidad.Proveedor.EstadoProveedor;
 import com.semillero.ecosistema.repositorio.IProveedorRepositorio;
+import com.semillero.ecosistema.repositorio.IPublicacionRepositorio;
 
 @Service
 public class DashboardServicio {
@@ -13,15 +19,23 @@ public class DashboardServicio {
 	@Autowired
 	private IProveedorRepositorio proveedorRepositorio;
 	
+	@Autowired
+	private IPublicacionRepositorio publicacionRepositorio;
+	
 	public Long proveedoresAceptados() {
 		return proveedorRepositorio.countByEstado(EstadoProveedor.ACEPTADO);
 	}
 	
-	public Long proveedoresEnEspera() {
-		return proveedorRepositorio.countByEstado(EstadoProveedor.REVISION_INICIAL);
-	}
+	 public Long proveedoresEnEspera() {
+	        List<EstadoProveedor> estados = Arrays.asList(
+	            EstadoProveedor.REVISION_INICIAL, 
+	            EstadoProveedor.REQUIERE_CAMBIOS, 
+	            EstadoProveedor.CAMBIOS_REALIZADOS
+	        );
+	        return proveedorRepositorio.countByEstadoIn(estados);
+	    }
 	
-	public Long proveedoresDenegador() {
+	public Long proveedoresDenegados() {
 		return proveedorRepositorio.countByEstado(EstadoProveedor.DENEGADO);
 	}
 	
@@ -32,4 +46,18 @@ public class DashboardServicio {
 	public Long contarProveedoresPorCategoria(Categoria categoria) {
 		return proveedorRepositorio.countByCategoria(categoria);
 	}
+	
+	public Map<Long, Integer> obtenerVisualizacionesDeTodasLasPublicaciones() {
+	    List<Object[]> resultados = publicacionRepositorio.findAllVisualizaciones();
+	    Map<Long, Integer> visualizacionesPorPublicacion = new HashMap<>();
+	    for (Object[] resultado : resultados) {
+	        Long id = (Long) resultado[0];
+	        Integer visualizaciones = (Integer) resultado[1];
+	        visualizacionesPorPublicacion.put(id, visualizaciones);
+	    }
+	    return visualizacionesPorPublicacion;
+	}
+	
+	
+	
 }

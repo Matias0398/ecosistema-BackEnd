@@ -22,5 +22,7 @@ public interface IProveedorRepositorio extends JpaRepository<Proveedor, Long>{
 	            LocalDateTime fechaCreacion);
 	long countByEstado(Proveedor.EstadoProveedor estado);
 	
+	long countByEstadoIn(List<Proveedor.EstadoProveedor> estados);
+	
 	long countByCategoria(Categoria categoria);
 }
