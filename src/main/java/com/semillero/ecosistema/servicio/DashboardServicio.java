@@ -47,17 +47,8 @@ public class DashboardServicio {
 		return proveedorRepositorio.countByCategoria(categoria);
 	}
 	
-	public Map<Long, Integer> obtenerVisualizacionesDeTodasLasPublicaciones() {
-	    List<Object[]> resultados = publicacionRepositorio.findAllVisualizaciones();
-	    Map<Long, Integer> visualizacionesPorPublicacion = new HashMap<>();
-	    for (Object[] resultado : resultados) {
-	        Long id = (Long) resultado[0];
-	        Integer visualizaciones = (Integer) resultado[1];
-	        visualizacionesPorPublicacion.put(id, visualizaciones);
-	    }
-	    return visualizacionesPorPublicacion;
-	}
-	
-	
+	public List<Map<String, Object>> obtenerDetallesDeTodasLasPublicaciones() {
+        return publicacionRepositorio.findAllVisualizacionesAndDetails();
+    }
 	
 }

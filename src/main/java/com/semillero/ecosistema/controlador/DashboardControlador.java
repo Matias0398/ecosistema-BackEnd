@@ -50,9 +50,9 @@ public class DashboardControlador {
 	    return sortedEstadisticas;
 	}
 	
-	 @GetMapping("/visualizaciones")
-	    public Map<Long, Integer> obtenerVisualizacionesDeTodas() {
-	        return dashboardServicio.obtenerVisualizacionesDeTodasLasPublicaciones();
-	    }
+	@GetMapping("/visualizaciones")
+	public List<Map<String, Object>> obtenerDetallesDeTodas() {
+	    return dashboardServicio.obtenerDetallesDeTodasLasPublicaciones();
+	}
 	
 }
