@@ -19,13 +19,19 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.opencagedata.jopencage.model.JOpenCageResponse;
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
+import com.semillero.ecosistema.dto.CoordenadaDto;
 import com.semillero.ecosistema.dto.ProveedorDto;
 import com.semillero.ecosistema.dto.RevisionDto;
+import com.semillero.ecosistema.dto.UbicacionDto;
 import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.entidad.Usuario;
+import com.semillero.ecosistema.servicio.GeocodingService;
 import com.semillero.ecosistema.servicio.ProveedorServicio;
 import com.semillero.ecosistema.servicio.UsuarioServicioImpl;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping
@@ -36,6 +42,10 @@ public class ProveedorControlador {
 	
 	@Autowired
 	private UsuarioServicioImpl usuarioServicio;
+	
+	@Autowired
+	private GeocodingService geocodingService;
+	
 	
 	@PreAuthorize("hasRole('USUARIO')")
 	@PostMapping(value="/crearProveedor/usuario/{usuarioId}",consumes = "multipart/form-data")
@@ -133,4 +143,13 @@ public class ProveedorControlador {
 		}
 		
 	}
+	
+	@GetMapping(value = "/proveedoresCercanos")
+	public List<Proveedor> obtenerProveedoresCercanos(@RequestParam(required = false) Double lat, @RequestParam(required = false) Double lng) throws Exception{
+		return proveedorServicio.obtenerProveedoresCercanos(lat, lng);
+	}
+
+	
+	
+	
 }
