@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.semillero.ecosistema.entidad.Categoria;
 import com.semillero.ecosistema.repositorio.ICategoriaRepositorio;
 import com.semillero.ecosistema.servicio.DashboardServicio;
-import com.semillero.ecosistema.servicio.ProveedorServicio;
+
 
 @RestController
 public class DashboardControlador {
@@ -27,8 +27,9 @@ public class DashboardControlador {
     public Map<String, Long> obtenerEstadisticasProveedores() {
         Map<String, Long> estadisticas = new HashMap<>();
         estadisticas.put("aceptados", dashboardServicio.proveedoresAceptados());
-        estadisticas.put("enEspera", dashboardServicio.proveedoresEnEspera());
+        estadisticas.put("enRevision", dashboardServicio.proveedoresEnEspera());
         estadisticas.put("denegados", dashboardServicio.proveedoresDenegador());
+        estadisticas.put("total", dashboardServicio.proveedorTotal());
 
         return estadisticas;
     }

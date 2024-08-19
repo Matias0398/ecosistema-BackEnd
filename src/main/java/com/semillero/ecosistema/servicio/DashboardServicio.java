@@ -24,6 +24,10 @@ public class DashboardServicio {
 	public Long proveedoresDenegador() {
 		return proveedorRepositorio.countByEstado(EstadoProveedor.DENEGADO);
 	}
+	
+	public Long proveedorTotal() {
+		return proveedorRepositorio.count();
+	}
 
 	public Long contarProveedoresPorCategoria(Categoria categoria) {
 		return proveedorRepositorio.countByCategoria(categoria);
