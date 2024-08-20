@@ -1,5 +1,6 @@
 package com.semillero.ecosistema.repositorio;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,8 @@ public interface IProveedorRepositorio extends JpaRepository<Proveedor, Long>{
 	
 	List<Proveedor> findByCategoriaId(Long categoriaId);
 	List<Proveedor> findByUsuario(Usuario usuarioCreador);
+	
+	 List<Proveedor> findByEstadoAndDeletedFalseAndFechaCreacionAfter(
+	            Proveedor.EstadoProveedor estado,
+	            LocalDateTime fechaCreacion);
 }
