@@ -52,23 +52,31 @@ public class PublicacionControlador {
 	    Optional<Usuario> user = usuarioRepositorio.findById(userId);
 	    
 	    if (user.isPresent() && user.get().getRol() == RolDeUsuario.ADMIN) {
-	        List<ImageModel> imageModels = new ArrayList<>();
-	        
-	        // Crear ImageModel para cada archivo
-	        for (MultipartFile file : files) {
-	            String nombreArchivo = file.getOriginalFilename();
-	            
-	            ImageModel imageModel = new ImageModel();
-	            imageModel.setFile(file);
-	            imageModel.setNombre(nombreArchivo);
-	            
-	            imageModels.add(imageModel);
-	        }
+	    	//se fija que el tamaño del array de files que llega no sea mayor que tres, si es así devuelve un mensaje de error
+	    	if(files.size() > 3) {
+	    		return ResponseEntity.badRequest().body("No se pueden subir más de 3 imágenes");
+	    	} else {
+	    		//si el tamaño del array de files es menor o igual a 3, continúa normalmente con la creación de la publicación
+	    		List<ImageModel> imageModels = new ArrayList<>();
+		        
+		        //Crear ImageModel para cada archivo
+		        for (MultipartFile file : files) {
+		            String nombreArchivo = file.getOriginalFilename();
+		            
+		            ImageModel imageModel = new ImageModel();
+		            imageModel.setFile(file);
+		            imageModel.setNombre(nombreArchivo);
+		            
+		            imageModels.add(imageModel);
+		        }
 
-	        // Pasar la lista de ImageModel al servicio de publicaciones
-	        publicacionDto.setUsuarioCreador(user.get());
-	        publicacionServicioImpl.crearPublicacion(publicacionDto, imageModels);
-	        return ResponseEntity.ok("Publicación creada con éxito");
+		        // Pasar la lista de ImageModel al servicio de publicaciones
+		        publicacionDto.setUsuarioCreador(user.get());
+		        publicacionServicioImpl.crearPublicacion(publicacionDto, imageModels);
+		        
+		        return ResponseEntity.ok("Publicación creada con éxito");
+	    	}
+	        
 	    }
 	    
 	    return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado o con los permisos requeridos");
