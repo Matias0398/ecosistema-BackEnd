@@ -16,16 +16,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
 import com.semillero.ecosistema.dto.PublicacionDto;
+import com.semillero.ecosistema.entidad.Imagen;
 import com.semillero.ecosistema.entidad.Publicacion;
 import com.semillero.ecosistema.entidad.Usuario;
 import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
 import com.semillero.ecosistema.repositorio.IUsuarioRepositorio;
+import com.semillero.ecosistema.servicio.ImagenServicioImpl;
 import com.semillero.ecosistema.servicio.PublicacionServicioImpl;
 
 import jakarta.validation.Valid;
@@ -37,6 +40,8 @@ public class PublicacionControlador {
 	private PublicacionServicioImpl publicacionServicioImpl;
 	@Autowired
 	private IUsuarioRepositorio usuarioRepositorio;
+	@Autowired
+	private ImagenServicioImpl imagenServicioImpl;
 	
 
 
@@ -70,18 +75,39 @@ public class PublicacionControlador {
 	}
 
 
-	
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(value="/editar-publicacion/{id}")
-	public ResponseEntity<String> editarPublicacion(@PathVariable Long id, @Valid @RequestBody Publicacion publicacion) {
-		boolean success = publicacionServicioImpl.editarPublicacion(id, publicacion);
-		
-		if (success) {
-			 return ResponseEntity.ok("La publicacion se actualizó con éxito");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró una publicación con el id proporcionado");
+	@PutMapping(value="/editar-publicacion/publicacion/{publicacionId}", consumes = "multipart/form-data")
+	public ResponseEntity<?> editarPublicacion(@PathVariable Long publicacionId, @ModelAttribute PublicacionDto publicacionEditada) {
+		try {
+			Publicacion publicacionActualizada = publicacionServicioImpl.editarPublicacion(publicacionId, publicacionEditada);
+			return ResponseEntity.status(HttpStatus.OK).body(publicacionActualizada);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@DeleteMapping(value ="/eliminar/{imagenId}")
+	public ResponseEntity<?> eliminarImagen(@PathVariable Long imagenId) {
+		try {
+	        imagenServicioImpl.eliminarImagen(imagenId);
+	        return ResponseEntity.ok("Imagen eliminada correctamente");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	    }
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/actualizarImagen/{imagenId}")
+    public ResponseEntity<?> actualizarImagen(@PathVariable Long imagenId, @RequestParam("file") MultipartFile file) {
+        try {
+            // Llamar al servicio para actualizar la imagen
+            Imagen imagenActualizada = imagenServicioImpl.actualizarImagen(imagenId, file);
+            return ResponseEntity.ok(imagenActualizada);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping(value="/borrar-publicacion/{id}")
@@ -123,6 +149,7 @@ public class PublicacionControlador {
 
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/cambiar-estado/{id}")
 	public ResponseEntity<String> cambiarEstado(@PathVariable Long id) {
 		boolean success = publicacionServicioImpl.cambiarEstado(id);

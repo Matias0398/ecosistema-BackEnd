@@ -94,32 +94,20 @@ public class PublicacionServicioImpl {
 		return false;
 	}
 	
-	public boolean editarPublicacion(Long id, Publicacion publicacion) {
-		Optional <Publicacion> opcPublicacion = buscarPublicacionPorId(id);
+	public Publicacion editarPublicacion(Long publicacionId, PublicacionDto publicacionEditada) throws Exception{
+		Publicacion publicacionDB = publicacionRepositorio.findById(publicacionId)
+			.orElseThrow(() -> new Exception("Publicacion no encontrada"));
 		
-		if(opcPublicacion.isPresent()) {
-			Publicacion publicacionBD = opcPublicacion.get();
-			
-			
-			List<Imagen> nuevasImagenes = !Objects.isNull(publicacion.getImagenes())
-					? publicacion.getImagenes()
-					: publicacionBD.getImagenes();
-			
-			int nuevaCantVisualizaciones = !Objects.isNull(publicacion.getCantidadDeVisualizaciones())
-					? publicacion.getCantidadDeVisualizaciones()
-					: publicacionBD.getCantidadDeVisualizaciones();
-			
-			publicacionBD.setTitulo(publicacion.getTitulo());
-			publicacionBD.setDescripcion(publicacion.getDescripcion());
-			publicacionBD.setDeleted(publicacion.isDeleted());	
-			publicacionBD.setImagenes(nuevasImagenes);
-			publicacionBD.setCantidadDeVisualizaciones(nuevaCantVisualizaciones);
-			
-			publicacionRepositorio.save(publicacionBD);
-			
-			return true;
-		}
-		return false;
+		if(publicacionEditada.getTitulo() != null) publicacionDB.setTitulo(publicacionEditada.getTitulo());
+		if(publicacionEditada.getDescripcion() != null) publicacionDB.setDescripcion(publicacionEditada.getDescripcion());
+		if(publicacionEditada.getFechaDeCreacion() != null) publicacionDB.setFechaDeCreacion(publicacionEditada.getFechaDeCreacion());
+		if(publicacionEditada.getUsuarioCreador() != null) publicacionDB.setUsuarioCreador(publicacionEditada.getUsuarioCreador());
+		if(publicacionEditada.getCantidadDeVisualizaciones() != null) publicacionDB.setCantidadDeVisualizaciones(publicacionEditada.getCantidadDeVisualizaciones());
+		
+		publicacionRepositorio.save(publicacionDB);
+		
+		return publicacionDB;
+		
 	}
 	
 	
