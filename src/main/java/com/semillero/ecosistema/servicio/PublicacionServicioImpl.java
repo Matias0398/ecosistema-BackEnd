@@ -75,11 +75,11 @@ public class PublicacionServicioImpl {
 		return publicacionRepositorio.findById(id);
 	}
 	
-	public void incrementarVisualizaciones(Publicacion publicacion) {
-			publicacion.setCantidadDeVisualizaciones(publicacion.getCantidadDeVisualizaciones() + 1);
-			
-			publicacionRepositorio.save(publicacion);
-	}
+
+    public void incrementarVisualizaciones(Publicacion publicacion) {
+        publicacion.setCantidadDeVisualizaciones(publicacion.getCantidadDeVisualizaciones() + 1);
+        publicacionRepositorio.save(publicacion);
+    }
 	
 	public boolean cambiarEstado(Long id) {
 		Optional <Publicacion> opcPublicacion = buscarPublicacionPorId(id);

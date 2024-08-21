@@ -139,9 +139,6 @@ public class PublicacionControlador {
 	public ResponseEntity<List<Publicacion>> obtenerPublicacionesActivas() {
 		List<Publicacion> publicacionesActivas = publicacionServicioImpl.obtenerPublicacionesActivas();
 		
-		for(Publicacion publicacion : publicacionesActivas) {
-			publicacionServicioImpl.incrementarVisualizaciones(publicacion);
-		}
 		return ResponseEntity.ok(publicacionesActivas);
 	}
 	
@@ -155,6 +152,18 @@ public class PublicacionControlador {
 		    } 
 		   return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró ninguna publicación con el id proporcionado");
 
+	}
+	
+	@GetMapping(value = "incrementarVisualizaciones/{idPublicacion}")
+	public ResponseEntity<?> incrementarVisualizaciones(@PathVariable Long idPublicacion) {
+	    Optional<Publicacion> publicacion = publicacionServicioImpl.buscarPublicacionPorId(idPublicacion);
+	    
+	    if (publicacion.isPresent()) {
+	        Publicacion pub = publicacion.get();
+	        publicacionServicioImpl.incrementarVisualizaciones(pub);
+	        return ResponseEntity.ok().body("Visualizaciones incrementadas");
+	    } 
+	    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró ninguna publicación con el id proporcionado");
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")

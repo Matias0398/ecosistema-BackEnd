@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/crearProveedor/**", "/editarProveedor/**", "misProveedores/**","/eliminarImagen/**","/actualizar/**").hasRole("USUARIO")
  //                       .requestMatchers("/buscarPorId/**").hasAnyRole("USUARIO","ADMIN")
                         .requestMatchers("/buscarPorCategoria/**", "/mostrarProveedorActivo","/mostrarTodo","/buscarPorId/**").permitAll()
-                        .requestMatchers("/categorias/**", "/ubicacion/**").permitAll()
+                        .requestMatchers("/categorias/**", "/ubicacion/**","incrementarVisualizaciones/**").permitAll()
                         .requestMatchers("/error").anonymous() // Permitir acceso anónimo a /error
                         .anyRequest().authenticated() // Asegura que todas las demás solicitudes estén autenticadas
                 )
