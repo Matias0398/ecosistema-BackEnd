@@ -39,7 +39,7 @@ public class PublicacionServicioImpl {
 	    publicacionNueva.setDeleted(publicacionDto.isDeleted());
 	    publicacionNueva.setFechaDeCreacion(publicacionDto.getFechaDeCreacion());
 	    publicacionNueva.setUsuarioCreador(publicacionDto.getUsuarioCreador());
-	    publicacionNueva.setCantidadDeVisualizaciones(publicacionDto.getCantidadDeVisualizaciones());
+
 	    
 	    List<Imagen> listaDeImagenes = new ArrayList<>();
 
@@ -102,7 +102,6 @@ public class PublicacionServicioImpl {
 		if(publicacionEditada.getDescripcion() != null) publicacionDB.setDescripcion(publicacionEditada.getDescripcion());
 		if(publicacionEditada.getFechaDeCreacion() != null) publicacionDB.setFechaDeCreacion(publicacionEditada.getFechaDeCreacion());
 		if(publicacionEditada.getUsuarioCreador() != null) publicacionDB.setUsuarioCreador(publicacionEditada.getUsuarioCreador());
-		if(publicacionEditada.getCantidadDeVisualizaciones() != null) publicacionDB.setCantidadDeVisualizaciones(publicacionEditada.getCantidadDeVisualizaciones());
 		
 		publicacionRepositorio.save(publicacionDB);
 		

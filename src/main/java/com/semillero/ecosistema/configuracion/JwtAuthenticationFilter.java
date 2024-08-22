@@ -48,7 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .getBody();
 
                 String username = claims.getSubject();
-                System.out.println("Nombre de usuario extraído del token: " + username); // Log del nombre de usuario
 
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -57,16 +56,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-                        System.out.println("Conjunto de autenticación para el usuario: " + username); // Log de autenticación
                     }
                 }
             } catch (SignatureException e) {
-                System.out.println("Firma JWT no válida");
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Firma JWT no válida");
                 return;
             } catch (Exception e) {
-                System.out.println("Token JWT no válido");
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT no válido");
                 return;
