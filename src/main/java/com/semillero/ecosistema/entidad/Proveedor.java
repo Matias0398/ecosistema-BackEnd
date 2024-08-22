@@ -1,6 +1,7 @@
 package com.semillero.ecosistema.entidad;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +84,9 @@ public class Proveedor {
 	private boolean deleted=false;
 	
 	private String feedback;
+	
+	@NotNull
+	private LocalDateTime fechaCreacion;
 	
 	@OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
