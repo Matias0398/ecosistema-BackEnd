@@ -135,7 +135,7 @@ public class ProveedorServicio {
         proveedornuevo.setFeedback("Proveedor en revisión");
         proveedornuevo.setFacebook(proveedorDto.getFacebook());
         proveedornuevo.setInstagram(proveedorDto.getInstagram());
-        proveedornuevo.setFechaCreacion(LocalDateTime.now()	);
+        proveedornuevo.setFechaCreacion(LocalDateTime.now());
 
         List<Imagen> listaimagenes = new ArrayList<>();
         for (ImageModel imageModel : imageModels) {
@@ -261,6 +261,9 @@ public class ProveedorServicio {
 		Proveedor proveedor = proveedorRepositorio.findById(id)
 				.orElseThrow(() -> new RuntimeException("Proveedor no encontrado"));
 		proveedor.setEstado(estado);
+		if (estado.equals(Proveedor.EstadoProveedor.ACEPTADO)) {
+			proveedor.setFechaCreacion(LocalDateTime.now());
+		}
 		proveedor.setFeedback(feedback);
 		return proveedorRepositorio.save(proveedor);
 	}
