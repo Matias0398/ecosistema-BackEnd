@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,12 +22,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	
-    private final UserDetailsService userDetailsService;
-    private final String secretKey = "fsdfs46151@fde"; // Debe coincidir con la clave secreta en JwtUtil
 
-    public JwtAuthenticationFilter(UserDetailsService userDetailsService) {
+    private final UserDetailsService userDetailsService;
+    private final String secretKey;
+
+    public JwtAuthenticationFilter(UserDetailsService userDetailsService,
+                                   @Value("${secretKey}") String secretKey) {
         this.userDetailsService = userDetailsService;
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null) {
             try {
                 Claims claims = Jwts.parser()
-                        .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
+                        .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8)) // Usa el secretKey inyectado
                         .parseClaimsJws(token)
                         .getBody();
 

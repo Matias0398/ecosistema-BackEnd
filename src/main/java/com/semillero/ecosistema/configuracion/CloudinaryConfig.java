@@ -12,13 +12,13 @@ import com.cloudinary.utils.ObjectUtils;
 @Configuration
 public class CloudinaryConfig {
 
-	@Value("${cloudinary.cloud_name:dyb7cwvgz}")
+	@Value("${cloudinary.cloud_name}")
 	private String cloudName;
 	
-	@Value("${cloudinary.api_key:599862417877693}")
+	@Value("${cloudinary.api_key}")
 	private String apiKey;
 	
-	@Value("${cloudinary.api_secret:aCT0x1D4mJVmteBomxwATcixv9k}")
+	@Value("${cloudinary.api_secret}")
 	private String apiSecret;
 	
 	@Bean

@@ -13,7 +13,7 @@ public class TareaEnvioCorreo {
 	private ProveedorServicio proveedorServicio;
 	
 	//para probar que funcioone usar "0 * * * * MON-FRI"
-	@Scheduled(cron = "0 0 9 * * MON") 
+	@Scheduled(cron = "* *git 9 * * MON")
 	public void enviarReporteSemanal() {
 		System.out.println("Iniciando tarea programada de envío de reporte semanal.");
 		proveedorServicio.enviarReporteSemanal();

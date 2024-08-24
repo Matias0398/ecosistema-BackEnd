@@ -1,23 +1,13 @@
 package com.semillero.ecosistema.servicio;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.*;
 
-import java.util.Collections;
-
-import java.util.HashSet;
-import java.util.Iterator;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import com.semillero.ecosistema.dto.comparator.DistanciaDtoComparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import com.opencagedata.jopencage.model.JOpenCageLatLng;
@@ -390,44 +380,27 @@ public class ProveedorServicio {
 
 	    return distancia;
 	}
-	
-	private void calcularProveedoresCercanos (List<Proveedor> proveedoresCercanos, List<CoordenadaDto> listaCoordenadas, Double lat, Double lng) {
-		//crea una lista de distancias vacía
-				List<DistanciaDto> listaDistancias = new ArrayList<DistanciaDto>();
-				
-				//recorre la lista de coordenadas 
-				for (CoordenadaDto coordenada : listaCoordenadas) {
-					//crea una variable distancia
+
+	private void calcularProveedoresCercanos(List<Proveedor> proveedoresCercanos, List<CoordenadaDto> listaCoordenadas, Double lat, Double lng) {
+		List<DistanciaDto> listaDistancias = listaCoordenadas.stream()
+				.map(coordenada -> {
 					DistanciaDto distancia = new DistanciaDto();
-					//crea una variable y le asigna la lat de la coordenada actual
 					double latProveedor = coordenada.getLatitud();
-					//crea una variable y le asigna la long de la coordenada actual
 					double lngProveedor = coordenada.getLongitud();
-					//crea una variable y le asigna el resultado del cálculo de distancia
-					//el cálculo lo hace con la latitud y longitud que llega por parámetros y la latitud y longitud de la coordenada actual
 					double calculoDistancia = calcularDistancia(lat, lng, latProveedor, lngProveedor);
-					
-					//asigna el valor de id de proveedor de coordenada a la variable distancia
 					distancia.setIdProveedor(coordenada.getId());
-					//asina la el resultado del cálculo de distancia al campo distancia de la variable distancia
 					distancia.setDistancia(calculoDistancia);
-					
-					//agrega distancia a la lista de distancias
-					listaDistancias.add(distancia);
-				}
-				
-				//ordena la lista de distancias de menor a mayor
-				Collections.sort(listaDistancias, new DistanciaDtoComparator());
-				
-				
-				for (int i = 0; i <= 3; i++) {
-					DistanciaDto distanciaDto = listaDistancias.get(i);
-					Optional<Proveedor> proveedorCercano = proveedorRepositorio.findById(distanciaDto.getIdProveedor());
-					if(proveedorCercano.isPresent()) {
-						proveedoresCercanos.add(proveedorCercano.get());
-					}
-					
-				}
+					return distancia;
+				})
+				.sorted(Comparator.comparingDouble(DistanciaDto::getDistancia))
+				.limit(4)
+				.collect(Collectors.toList());
+
+		proveedoresCercanos.addAll(listaDistancias.stream()
+				.map(distanciaDto -> proveedorRepositorio.findById(distanciaDto.getIdProveedor()))
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toList()));
 	}
 	
 	//método para obtener los proveedores más cercanos a partir del cálculo de distancia

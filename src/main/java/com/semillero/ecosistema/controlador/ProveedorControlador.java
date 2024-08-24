@@ -2,6 +2,7 @@ package com.semillero.ecosistema.controlador;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,8 @@ import com.semillero.ecosistema.dto.RevisionDto;
 import com.semillero.ecosistema.dto.UbicacionDto;
 import com.semillero.ecosistema.entidad.Proveedor;
 import com.semillero.ecosistema.entidad.Usuario;
+import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
+import com.semillero.ecosistema.repositorio.IUsuarioRepositorio;
 import com.semillero.ecosistema.servicio.GeocodingService;
 
 import com.semillero.ecosistema.entidad.Imagen;
@@ -56,27 +59,33 @@ public class ProveedorControlador {
 	
 	@Autowired
 	private ImagenServicioImpl imagenServicioImpl;
-
 	
+	@Autowired
+	private IUsuarioRepositorio usuarioRepositorio;
+
 	@PreAuthorize("hasRole('USUARIO')")
 	@PostMapping(value="/crearProveedor/usuario/{usuarioId}",consumes = "multipart/form-data")
 	public ResponseEntity<?> crearProveedor(@PathVariable Long usuarioId,@ModelAttribute ProveedorDto proveedorDto,@RequestPart("imagenes") List<MultipartFile> files) {
 		try {
-			List<ImageModel>imageModels=new ArrayList<>();
-			for(MultipartFile file : files) {
-				String nombreArchivo=file.getOriginalFilename();
-				
-				ImageModel imageModel= new ImageModel();
-				imageModel.setFile(file);
-				imageModel.setNombre(nombreArchivo);
-				
-				imageModels.add(imageModel);
-				
+			Optional<Usuario> user = usuarioRepositorio.findById(usuarioId);
+			if(user.isPresent() && user.get().getRol()== RolDeUsuario.USUARIO) {
+				if(files.size() > 3) {
+		    		return ResponseEntity.badRequest().body("No se pueden subir más de 3 imágenes");
+				}else {
+					List<ImageModel>imageModels=new ArrayList<>();
+					for(MultipartFile file : files) {
+						String nombreArchivo=file.getOriginalFilename();
+						
+						ImageModel imageModel= new ImageModel();
+						imageModel.setFile(file);
+						imageModel.setNombre(nombreArchivo);
+						
+						imageModels.add(imageModel);
+				}
+					proveedorDto.setUsuarioId(usuarioId);
+					proveedorServicio.crearProveedor(usuarioId, proveedorDto,imageModels);
 			}
-			
-			proveedorDto.setUsuarioId(usuarioId);
-			proveedorServicio.crearProveedor(usuarioId, proveedorDto,imageModels);
-           
+		}        
 			return ResponseEntity.ok("Proveedor creado con éxito");
 		}catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

@@ -4,16 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
-import com.semillero.ecosistema.dto.ImageUploadResult;
 import com.semillero.ecosistema.dto.PublicacionDto;
 import com.semillero.ecosistema.entidad.Imagen;
 import com.semillero.ecosistema.entidad.Publicacion;
