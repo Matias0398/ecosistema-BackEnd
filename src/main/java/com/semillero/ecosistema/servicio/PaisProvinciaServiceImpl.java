@@ -1,6 +1,5 @@
 package com.semillero.ecosistema.servicio;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,19 +34,22 @@ public class PaisProvinciaServiceImpl {
 		dto.setNombre(pais.getNombre());
 		return dto;
 	}
-	
-	public PaisDto obtenerPaisDtoPorId(Long paisId) throws Exception {
-	    Pais pais = paisRepositorio.findById(paisId).orElseThrow(() -> new Exception("País no encontrado"));
-	    return convertirAPaisDto(pais);
-	}
-	
-	public List<Provincia> mostrarProvinciasPorPaisId(Long paisId) {
-	    Optional<Pais> opc = paisRepositorio.findById(paisId);
-	    return opc.map(Pais::getProvincias).orElse(Collections.emptyList());
-	}
-	
-	public Provincia mostrarProvinciaPorId(Long paisId, Long provinciaId) {
-	    return provinciaRepositorio.findByIdAndPaisId(provinciaId, paisId).orElse(null);
+
+	public Pais obtenerPaisPorId(Long paisId) throws Exception {
+	    return paisRepositorio.findById(paisId).orElseThrow(()->new Exception("País no encontrado con el ID:"+paisId));
 	}
 
+	public Provincia obtenerProvinciaPorId(Long provinciaId,Long paisId) throws Exception {
+		Provincia provincia=provinciaRepositorio.findById(provinciaId).orElseThrow(()->new Exception("Provincia no encontrada con el ID:"+provinciaId));
+		if(provincia!=null) {
+			return provinciaRepositorio.findByIdAndPaisId(provinciaId, paisId).orElseThrow(()->new Exception("La provincia no pertenece al pais con el ID: "+paisId));
+		}else {
+			return provinciaRepositorio.findById(provinciaId).orElseThrow(() -> new Exception("Provincia no encontrada con el ID:" + provinciaId));
+		}
+	}
+	
+	public List<Provincia> mostrarProvinciasPorPaisId(Long paisId) throws Exception {
+	    Optional<Pais> opc = paisRepositorio.findById(paisId);
+	    return opc.map(Pais::getProvincias).orElseThrow(() -> new Exception("El pais con el id: "+paisId+" no existe"));
+	}
 }

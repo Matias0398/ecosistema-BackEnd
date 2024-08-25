@@ -44,17 +44,22 @@ public class Proveedor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@NotNull(message = "El nombre no puede estar en blanco")
 	private String nombre;
-	
+
+	@NotNull(message = "La descripción no puede estar en blanco")
 	@Size(max = 300, message = "La descripcion no puede tener mas de 300 caracteres")
 	private String descripcion;
-	
+
+	@NotNull(message = "El tipo de proveedor no puede estar en blanco")
 	@Size(max=50,message="No puede tener mas de 50 caracteres")
 	private String tipoProveedor;
-	
+
+	@NotNull(message = "El contacto no puede estar en blanco")
 	private String telefono;
-	
+
+	@NotNull(message = "El email no puede estar en blanco")
 	@Email
 	private String email;
 	

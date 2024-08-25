@@ -2,13 +2,11 @@ package com.semillero.ecosistema.servicio;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
 import java.util.stream.Collectors;
-import com.semillero.ecosistema.dto.comparator.DistanciaDtoComparator;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import com.opencagedata.jopencage.model.JOpenCageLatLng;
 import com.opencagedata.jopencage.model.JOpenCageResponse;
@@ -39,20 +37,19 @@ public class ProveedorServicio {
 	private IProveedorRepositorio proveedorRepositorio;
 
 	@Autowired
-
-	private PaisProvinciaServiceImpl paisProvinciaServiceImpl;
+	private PaisProvinciaServiceImpl paisProvinciaServicio;
 
 	@Autowired
 	private UsuarioServicioImpl usuarioServicioImpl;
 
 	@Autowired
 	private IUsuarioRepositorio usuarioRepositorio;
-	
-	@Autowired
-	private CategoriaServicioImpl categoriaServicioImpl;
 
 	@Autowired
 	private ImagenServicioImpl imagenServicioImpl;
+
+	@Autowired
+	private CategoriaServicioImpl categoriaServicio;
 
 	@Autowired
 	private ICategoriaRepositorio categoriaRepository;
@@ -71,78 +68,44 @@ public class ProveedorServicio {
 	    
 	private static final int maxProveedores=3;
 	
-	public Proveedor crearProveedor(Long usuarioId, ProveedorDto proveedorDto, List<ImageModel> imageModels) throws Exception {
+	public void crearProveedor(Long usuarioId, @Valid ProveedorDto proveedorDto, List<ImageModel> imageModels)throws Exception {
         int cantidadProveedores = proveedorRepositorio.countByUsuarioId(usuarioId);
         if (cantidadProveedores >= maxProveedores) {
-            throw new Exception("El usuario ya tiene el máximo de proveedores");
+			throw new Exception("El usuario no puede tener más de 3 proveedores");
         }
-
         Usuario usuario = usuarioServicioImpl.buscarPorId(usuarioId);
-        if (usuario == null) {
-            throw new Exception("El usuario no existe");
-        }
-
-        Proveedor proveedornuevo = new Proveedor();
-
+        Proveedor proveedorNuevo = new Proveedor();
         // Buscar y asignar Categoria
-        if (proveedorDto.getCategoriaId() != null) {
-            Optional<Categoria> categoriaOptional = categoriaRepository.findById(proveedorDto.getCategoriaId());
-            if (categoriaOptional.isPresent()) {
-                proveedornuevo.setCategoria(categoriaOptional.get());
-            } else {
-                throw new Exception("No se encontró una categoría con el ID: " + proveedorDto.getCategoriaId());
-            }
-        }
-
+        proveedorNuevo.setCategoria(categoriaServicio.buscarPorId(proveedorDto.getCategoriaId()));
         // Buscar y asignar Pais
-        if (proveedorDto.getPaisId() != null) {
-            Optional<Pais> paisOptional = paisRepository.findById(proveedorDto.getPaisId());
-            if (paisOptional.isPresent()) {
-                proveedornuevo.setPais(paisOptional.get());
-            } else {
-                throw new Exception("No se encontró un país con el ID: " + proveedorDto.getPaisId());
-            }
-        }
-
+        proveedorNuevo.setPais(paisProvinciaServicio.obtenerPaisPorId(proveedorDto.getPaisId()));
         // Buscar y asignar Provincia
-        if (proveedorDto.getProvinciaId() != null) {
-            Optional<Provincia> provinciaOptional = provinciaRepository.findById(proveedorDto.getProvinciaId());
-            if (provinciaOptional.isPresent()) {
-                proveedornuevo.setProvincia(provinciaOptional.get());
-            } else {
-                throw new Exception("No se encontró una provincia con el ID: " + proveedorDto.getProvinciaId());
-            }
-        }
-
-        proveedornuevo.setUsuario(usuario);
-        proveedornuevo.setEstado(EstadoProveedor.REVISION_INICIAL);
-        proveedornuevo.setNombre(proveedorDto.getNombre());
-        proveedornuevo.setTipoProveedor(proveedorDto.getTipoProveedor());
-        proveedornuevo.setCiudad(proveedorDto.getCiudad());
-        proveedornuevo.setDescripcion(proveedorDto.getDescripcion());
-        proveedornuevo.setEmail(proveedorDto.getEmail());
-        proveedornuevo.setTelefono(proveedorDto.getTelefono());
-        proveedornuevo.setFeedback("Proveedor en revisión");
-        proveedornuevo.setFacebook(proveedorDto.getFacebook());
-        proveedornuevo.setInstagram(proveedorDto.getInstagram());
-        proveedornuevo.setFechaCreacion(LocalDateTime.now());
-
-        List<Imagen> listaimagenes = new ArrayList<>();
+        proveedorNuevo.setProvincia(paisProvinciaServicio.obtenerProvinciaPorId(proveedorDto.getProvinciaId(),proveedorDto.getPaisId()));
+        proveedorNuevo.setUsuario(usuario);
+        proveedorNuevo.setEstado(EstadoProveedor.REVISION_INICIAL);
+        proveedorNuevo.setNombre(proveedorDto.getNombre());
+        proveedorNuevo.setTipoProveedor(proveedorDto.getTipoProveedor());
+        proveedorNuevo.setCiudad(proveedorDto.getCiudad());
+        proveedorNuevo.setDescripcion(proveedorDto.getDescripcion());
+        proveedorNuevo.setEmail(proveedorDto.getEmail());
+        proveedorNuevo.setTelefono(proveedorDto.getTelefono());
+        proveedorNuevo.setFeedback("Proveedor en revisión");
+        proveedorNuevo.setFacebook(proveedorDto.getFacebook());
+        proveedorNuevo.setInstagram(proveedorDto.getInstagram());
+        proveedorNuevo.setFechaCreacion(LocalDateTime.now());
+        List<Imagen> listaImagenes = new ArrayList<>();
         for (ImageModel imageModel : imageModels) {
             if (imageModel.getFile() != null && !imageModel.getFile().isEmpty()) {
                 Imagen imagen = imagenServicioImpl.crearImagen(imageModel);
                 if (imagen != null) {
-                    imagen.setProveedor(proveedornuevo);
-                    listaimagenes.add(imagen);
+                    imagen.setProveedor(proveedorNuevo);
+                    listaImagenes.add(imagen);
                 }
             }
         }
-        proveedornuevo.setImagenes(listaimagenes);
-
-        return proveedorRepositorio.save(proveedornuevo);
-    }
-	
-
+        proveedorNuevo.setImagenes(listaImagenes);
+		proveedorRepositorio.save(proveedorNuevo);
+	}
 
 	public Proveedor editarProveedor(Long usuarioId, Long proveedorId, ProveedorDto proveedorDetalles) throws Exception {
 	    // Buscar el proveedor por ID
@@ -165,7 +128,6 @@ public class ProveedorServicio {
 	    if (proveedorDetalles.getCiudad() != null) proveedor.setCiudad(proveedorDetalles.getCiudad());
 	    if (proveedorDetalles.getFeedback() != null) proveedor.setFeedback(proveedorDetalles.getFeedback());
 	    proveedor.setEstado(EstadoProveedor.REVISION_INICIAL);
-	    
 	    // Actualizar solo si se proporciona una nueva categoría, país o provincia
 	    if (proveedorDetalles.getCategoriaId() != null) {
 	        Optional<Categoria> categoriaOptional = categoriaRepository.findById(proveedorDetalles.getCategoriaId());
@@ -175,7 +137,6 @@ public class ProveedorServicio {
 	            throw new Exception("No se encontró una categoría con el ID: " + proveedorDetalles.getCategoriaId());
 	        }
 	    }
-
 	    if (proveedorDetalles.getPaisId() != null) {
 	        Optional<Pais> paisOptional = paisRepository.findById(proveedorDetalles.getPaisId());
 	        if (paisOptional.isPresent()) {
@@ -184,7 +145,6 @@ public class ProveedorServicio {
 	            throw new Exception("No se encontró un país con el ID: " + proveedorDetalles.getPaisId());
 	        }
 	    }
-
 	    if (proveedorDetalles.getProvinciaId() != null) {
 	        Optional<Provincia> provinciaOptional = provinciaRepository.findById(proveedorDetalles.getProvinciaId());
 	        if (provinciaOptional.isPresent()) {
@@ -196,16 +156,14 @@ public class ProveedorServicio {
 
 	    return proveedorRepositorio.save(proveedor);
 	}
+
 	public List<Proveedor>buscarPorNombre(String query){
 		return proveedorRepositorio.findByNombreContainingIgnoreCase(query);
 	}
 
 	public Proveedor buscarProveedorPorId(Long proveedorId) throws Exception {
-		// Buscar proveedor por ID
 		Proveedor proveedor = proveedorRepositorio.findById(proveedorId)
 				.orElseThrow(() -> new Exception("Proveedor no encontrado"));
-
-		// Verificar el estado del proveedor y si está eliminado
 		if (!proveedor.isDeleted()) {
 			return proveedor;
 		} else {
@@ -214,9 +172,7 @@ public class ProveedorServicio {
 	}
 
 	public List<Proveedor> buscarPorCategoriaId(Long categoriaId) {
-
 		List<Proveedor> proveedorActivo = proveedorRepositorio.findAll();
-
 		return proveedorActivo
 				.stream().filter(proveedor -> EstadoProveedor.ACEPTADO.equals(proveedor.getEstado())
 						&& !proveedor.isDeleted() && categoriaId.equals(proveedor.getCategoria().getId()))
@@ -224,13 +180,10 @@ public class ProveedorServicio {
 	}
 
 	public List<Proveedor> mostrarProveedoresActivos() {
-
 		List<Proveedor> proveedorActivo = proveedorRepositorio.findAll();
-
 		return proveedorActivo.stream()
 				.filter(proveedor -> EstadoProveedor.ACEPTADO.equals(proveedor.getEstado()) && !proveedor.isDeleted())
 				.collect(Collectors.toList());
-
 	}
 
 	public List<Proveedor> mostrarProveedorNuevo() {
@@ -242,14 +195,12 @@ public class ProveedorServicio {
 	}
 
 	public List<Proveedor> mostrarTodo() {
-		List<Proveedor> proveedor = proveedorRepositorio.findAll();
-		return proveedor;
+        return proveedorRepositorio.findAll();
 	}
 
-
-	public Proveedor administrarProveedor(Long id, Proveedor.EstadoProveedor estado, String feedback) {
+	public Proveedor administrarProveedor(Long id, Proveedor.EstadoProveedor estado, String feedback)throws Exception {
 		Proveedor proveedor = proveedorRepositorio.findById(id)
-				.orElseThrow(() -> new RuntimeException("Proveedor no encontrado"));
+				.orElseThrow(() -> new Exception("Proveedor no encontrado"));
 		proveedor.setEstado(estado);
 		if (estado.equals(Proveedor.EstadoProveedor.ACEPTADO)) {
 			proveedor.setFechaCreacion(LocalDateTime.now());
@@ -260,8 +211,7 @@ public class ProveedorServicio {
 
 	public List<StatusDto> misEstados(Usuario usuarioCreador) {
 		List<Proveedor> proveedores = proveedorRepositorio.findByUsuario(usuarioCreador);
-		List<StatusDto> misEstados = new ArrayList<StatusDto>();
-
+		List<StatusDto> misEstados = new ArrayList<>();
 		for (Proveedor proveedor : proveedores) {
 			StatusDto proveedorStatus = new StatusDto();
 			proveedorStatus.setEstado(proveedor.getEstado());
@@ -271,7 +221,6 @@ public class ProveedorServicio {
 		}
 		return misEstados;
 	}
-	
 
 	public List<Proveedor> obtenerProveedoresAceptadosUltimaSemana() {
         LocalDateTime unaSemanaAtras = LocalDateTime.now().minusWeeks(1);
@@ -281,14 +230,14 @@ public class ProveedorServicio {
     }
 	
 	public void enviarReporteSemanal() {
-		List<Proveedor> proveedoresNuevos=obtenerProveedoresAceptadosUltimaSemana();
-		
-		if(!proveedoresNuevos.isEmpty()) {
+		List<Proveedor> proveedoresNuevos = obtenerProveedoresAceptadosUltimaSemana();
+		if (!proveedoresNuevos.isEmpty()) {
 			List<Usuario> todosLosUsuarios = usuarioRepositorio.findAll();
-			String cuerpoEmail=emailCuerpoServicio.generarCuerpoEmail(proveedoresNuevos);
+			String cuerpoEmail = emailCuerpoServicio.generarCuerpoEmail(proveedoresNuevos);
 			for (Usuario usuario : todosLosUsuarios) {
-				if(usuario.getRol().equals(RolDeUsuario.USUARIO))
-				emailCuerpoServicio.enviarCorreo(usuario.getEmail(), "Nuevos Proveedores Aceptados de la Semana", cuerpoEmail);
+				if (usuario.getRol().equals(RolDeUsuario.USUARIO)) {
+					emailCuerpoServicio.enviarCorreo(usuario.getEmail(), "Nuevos Proveedores Aceptados de la Semana", cuerpoEmail);
+				}
 			}
 		}
 	}
@@ -300,15 +249,17 @@ public class ProveedorServicio {
 		List<Proveedor> listaProveedores = mostrarTodo();
 		
 		//crea una lista vacía de ubicaciones
-		List<UbicacionDto> listaUbicaciones = new ArrayList<UbicacionDto>();
+		List<UbicacionDto> listaUbicaciones = new ArrayList<>();
 		
 		for(Proveedor proveedor : listaProveedores) {
 			//crea una variable de Ubicacion
 			UbicacionDto proveedorUbicacion = new UbicacionDto();
 			
-			//recorre la lista de ubicaciones y por cada elemento obtiene el id, la ciudad, provincia y pais
-			//asigna los valores de id, ciudad etc a la variable de Ubicacion
-			proveedorUbicacion.setId(proveedor.getId());
+			/*
+			Recorre la lista de ubicaciones y por cada elemento obtiene él, id, la ciudad, provincia y pais
+			asigna los valores de, id, ciudad etc. a la variable de Ubicacion
+			*/
+            proveedorUbicacion.setId(proveedor.getId());
 			proveedorUbicacion.setCiudad(proveedor.getCiudad());
 			proveedorUbicacion.setProvincia(proveedor.getProvincia());
 			proveedorUbicacion.setPais(proveedor.getPais());
@@ -323,46 +274,37 @@ public class ProveedorServicio {
 	//Pasar las ubicaciones a coordenadas
 	public List<CoordenadaDto> listarCoordenadas(List<UbicacionDto> listaUbicaciones) throws Exception {
 		//Crea una variable para guardar la lista de coordinadas 
-		List<CoordenadaDto> listaCoordenadas = new ArrayList<CoordenadaDto>();
-		
+		List<CoordenadaDto> listaCoordenadas = new ArrayList<>();
 		//recorre la lista de ubicaciones
 		for(UbicacionDto ubicacion : listaUbicaciones) {
 			//crea una variable de coordenada
 			CoordenadaDto coordenada = new CoordenadaDto();
-			
 			//construye la query con los datos de la ubicación actual
-			String query = ubicacion.getCiudad() + ", " + ubicacion.getProvincia().getNombre() + ", " + ubicacion.getPais().getNombre();;
-			
-			//crea una variable en la cual guarda la id de la ubicación actual
+			String query = ubicacion.getCiudad() + ", " + ubicacion.getProvincia().getNombre() + ", " + ubicacion.getPais().getNombre();
+			//crea una variable en la cual se guarda un ID de la ubicación actual
 			long idProveedor = ubicacion.getId();
-			
 			//llama al servicio de geocoding y le pasa la query creada anteriormente
 			JOpenCageResponse response = geocodingService.doForwardRequest(query);
-			
 			//verifica que la response del servicio de geocoding no esté vacía
 			if (CollectionUtils.isNotEmpty(response.getResults())) {
-				
 				/* obtiene los datos de geometry(acá se guarda la latitud y la longitud, obtenidos a partir de la query)
 				de la response y los asigna a una variable */
 				JOpenCageLatLng geometry =  response.getResults().get(0).getGeometry();
 				
-				//setea el id de la coordenada, asignandole el valor de id del proveedor
+				//setea el ID de la coordenada, asignándole el valor del ID del proveedor
 				coordenada.setId(idProveedor);
-				//setea la latitud de coordenada, asignandole la latitud obtenida de geometry
+				//setea la latitud de coordenada, asignándole la latitud obtenida de geometry
 				coordenada.setLatitud(geometry.getLat());
-				//setea la longitud de coordenada, asignandole la longitud de geometry
+				//setea la longitud de coordenada, asignándole la longitud de geometry
 				coordenada.setLongitud(geometry.getLng());
 				
 				//agrega la variable coordenada con sus datos a la lista de coordenadas
 				listaCoordenadas.add(coordenada);
 			} else {
-				//si la response del servicio de geocoding es vacía, entonces devueve un mensaje de error
+				//si la response del servicio de geocoding es vacía, entonces devuelve un mensaje de error
 				throw new Exception("No se encontraron coordenadas para la ubicación del proveedor con id " + idProveedor);
 			}
-			
-			
 		}
-		
 		return listaCoordenadas;
 	}
 	
@@ -373,12 +315,9 @@ public class ProveedorServicio {
 	    double lat2Rad = Math.toRadians(lat2);
 	    double lon1Rad = Math.toRadians(lon1);
 	    double lon2Rad = Math.toRadians(lon2);
-
 	    double x = (lon2Rad - lon1Rad) * Math.cos((lat1Rad + lat2Rad) / 2);
 	    double y = (lat2Rad - lat1Rad);
-	    double distancia = Math.sqrt(x * x + y * y) * earthRadius;
-
-	    return distancia;
+        return Math.sqrt(x * x + y * y) * earthRadius;
 	}
 
 	private void calcularProveedoresCercanos(List<Proveedor> proveedoresCercanos, List<CoordenadaDto> listaCoordenadas, Double lat, Double lng) {
@@ -394,13 +333,13 @@ public class ProveedorServicio {
 				})
 				.sorted(Comparator.comparingDouble(DistanciaDto::getDistancia))
 				.limit(4)
-				.collect(Collectors.toList());
+				.toList();
 
 		proveedoresCercanos.addAll(listaDistancias.stream()
 				.map(distanciaDto -> proveedorRepositorio.findById(distanciaDto.getIdProveedor()))
 				.filter(Optional::isPresent)
 				.map(Optional::get)
-				.collect(Collectors.toList()));
+				.toList());
 	}
 	
 	//método para obtener los proveedores más cercanos a partir del cálculo de distancia
@@ -408,7 +347,7 @@ public class ProveedorServicio {
 		if (Objects.nonNull(lat) && Objects.nonNull(lng)) {
 			List<UbicacionDto> listaDeUbicaciones = listarUbicaciones();
 			List<CoordenadaDto> listaDeCoordenadas = listarCoordenadas(listaDeUbicaciones);
-			List<Proveedor> proveedoresCercanos = new ArrayList<Proveedor>();
+			List<Proveedor> proveedoresCercanos = new ArrayList<>();
 			calcularProveedoresCercanos( proveedoresCercanos, listaDeCoordenadas, lat, lng);
 			return proveedoresCercanos;
 		} else {

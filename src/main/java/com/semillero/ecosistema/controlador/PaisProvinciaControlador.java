@@ -30,11 +30,14 @@ public class PaisProvinciaControlador {
 	
 	@GetMapping("/paises/{paisId}/provincias")
 	public ResponseEntity<?>mostrarProvinciasPorId(@PathVariable Long paisId){
-		List<Provincia>provincia=paisProvinciaServiceImpl.mostrarProvinciasPorPaisId(paisId);
-		if(provincia.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El id proporcionado no existe");
-		}else {
-			return ResponseEntity.ok(provincia);
+		try{
+			List<Provincia>provincias=paisProvinciaServiceImpl.mostrarProvinciasPorPaisId(paisId);
+			if(provincias.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El pais no tiene provincias");
+			}
+			return ResponseEntity.ok(provincias);
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
 }

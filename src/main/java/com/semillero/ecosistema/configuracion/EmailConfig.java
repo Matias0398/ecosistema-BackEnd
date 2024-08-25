@@ -1,7 +1,6 @@
 package com.semillero.ecosistema.configuracion;
 
 import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,16 +13,15 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 @PropertySource("classpath:application.properties")
 public class EmailConfig {
-
 	//ir a properties y agregar un correo
     @Value("${email.username}")
     private String email;
-
-    //ir a properties y agregar una contraseña para esto tienen que habilitar la verficacion de dos pasos
-    //y luego ir a contraseña de aplicacion crear una y pegar la contraseña que les de google
+    /*
+    ir a properties y agregar una contraseña para esto tienen que habilitar la verficación de dos pasos
+    y luego ir a contraseña de aplicación crear una y pegar la contraseña que les dé google
+    */
     @Value("${email.password}")
     private String password;
-
     private Properties getMailProperties() {
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");

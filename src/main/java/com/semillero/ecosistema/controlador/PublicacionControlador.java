@@ -1,10 +1,8 @@
 package com.semillero.ecosistema.controlador;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.semillero.ecosistema.cloudinary.dto.ImageModel;
 import com.semillero.ecosistema.dto.PublicacionDto;
 import com.semillero.ecosistema.entidad.Imagen;
@@ -30,7 +26,6 @@ import com.semillero.ecosistema.entidad.Usuario.RolDeUsuario;
 import com.semillero.ecosistema.repositorio.IUsuarioRepositorio;
 import com.semillero.ecosistema.servicio.ImagenServicioImpl;
 import com.semillero.ecosistema.servicio.PublicacionServicioImpl;
-
 import jakarta.validation.Valid;
 
 @RestController
@@ -42,15 +37,11 @@ public class PublicacionControlador {
 	private IUsuarioRepositorio usuarioRepositorio;
 	@Autowired
 	private ImagenServicioImpl imagenServicioImpl;
-	
-
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping(value = "/publicar/{userId}", consumes = "multipart/form-data")
-	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId,@Valid @ModelAttribute PublicacionDto publicacionDto,@RequestPart("imagen") List<MultipartFile> files) throws IOException {
-
+	public ResponseEntity<String> crearPublicacion(@PathVariable Long userId,@Valid @ModelAttribute PublicacionDto publicacionDto,@RequestPart("imagen") List<MultipartFile> files) throws Exception {
 	    Optional<Usuario> user = usuarioRepositorio.findById(userId);
-	    
 	    if (user.isPresent() && user.get().getRol() == RolDeUsuario.ADMIN) {
 	    	//se fija que el tamaño del array de files que llega no sea mayor que tres, si es así devuelve un mensaje de error
 	    	if(files.size() > 3) {
@@ -58,30 +49,22 @@ public class PublicacionControlador {
 	    	} else {
 	    		//si el tamaño del array de files es menor o igual a 3, continúa normalmente con la creación de la publicación
 	    		List<ImageModel> imageModels = new ArrayList<>();
-		        
 		        //Crear ImageModel para cada archivo
 		        for (MultipartFile file : files) {
 		            String nombreArchivo = file.getOriginalFilename();
-		            
 		            ImageModel imageModel = new ImageModel();
 		            imageModel.setFile(file);
 		            imageModel.setNombre(nombreArchivo);
-		            
 		            imageModels.add(imageModel);
 		        }
-
 		        // Pasar la lista de ImageModel al servicio de publicaciones
 		        publicacionDto.setUsuarioCreador(user.get());
 		        publicacionServicioImpl.crearPublicacion(publicacionDto, imageModels);
-		        
 		        return ResponseEntity.ok("Publicación creada con éxito");
 	    	}
-	        
 	    }
-	    
 	    return ResponseEntity.badRequest().body("No se encontró ningún usuario con el id proporcionado o con los permisos requeridos");
 	}
-
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping(value="/editar-publicacion/publicacion/{publicacionId}", consumes = "multipart/form-data")
@@ -121,7 +104,6 @@ public class PublicacionControlador {
 	@DeleteMapping(value="/borrar-publicacion/{id}")
 	public ResponseEntity<String> borrarPublicacion(@PathVariable Long id) {
 		boolean success = publicacionServicioImpl.borrarPublicacion(id);
-		
 		if (success) {
 			return ResponseEntity.ok("La publicación se borró con exito");
 		} else {
@@ -142,22 +124,18 @@ public class PublicacionControlador {
 		return ResponseEntity.ok(publicacionesActivas);
 	}
 	
-	
 	@GetMapping(value="buscar/{idPublicacion}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long idPublicacion) {
 		Optional<Publicacion> publicacion = publicacionServicioImpl.buscarPublicacionPorId(idPublicacion);
-		
 		   if(publicacion.isPresent()){
 		        return ResponseEntity.ok(publicacion.get());
 		    } 
 		   return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró ninguna publicación con el id proporcionado");
-
 	}
 	
 	@GetMapping(value = "incrementarVisualizaciones/{idPublicacion}")
 	public ResponseEntity<?> incrementarVisualizaciones(@PathVariable Long idPublicacion) {
 	    Optional<Publicacion> publicacion = publicacionServicioImpl.buscarPublicacionPorId(idPublicacion);
-	    
 	    if (publicacion.isPresent()) {
 	        Publicacion pub = publicacion.get();
 	        publicacionServicioImpl.incrementarVisualizaciones(pub);
@@ -170,14 +148,10 @@ public class PublicacionControlador {
 	@PutMapping("/cambiar-estado/{id}")
 	public ResponseEntity<String> cambiarEstado(@PathVariable Long id) {
 		boolean success = publicacionServicioImpl.cambiarEstado(id);
-
-        if (success==true) {
+        if (success) {
             return ResponseEntity.ok("El estado se cambio con éxito");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró una publicación con el id proporcionado");
         }
 	}
-	
-
-	
 }
