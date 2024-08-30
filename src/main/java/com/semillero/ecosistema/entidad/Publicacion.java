@@ -58,5 +58,5 @@ public class Publicacion {
 	private Usuario usuarioCreador;
 	
 	@NotNull
-	private int cantidadDeVisualizaciones = 0;
+	private Integer cantidadDeVisualizaciones = 0;
 }

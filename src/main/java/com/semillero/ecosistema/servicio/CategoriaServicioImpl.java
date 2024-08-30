@@ -20,6 +20,6 @@ public class CategoriaServicioImpl {
 	
 	public Categoria buscarPorId(Long id) {
 		Optional<Categoria> opc=categoriaRepositorio.findById(id);
-		return  opc.orElse(null);
+		return  opc.orElseThrow(() -> new RuntimeException("No se encontro la categoria con el id: "+id));
 	}
 }

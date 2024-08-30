@@ -14,8 +14,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Autowired
-    private UserDetailsService userDetailsService;
+    public SecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.userDetailsService = userDetailsService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,19 +30,18 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/login", "/auth/registro", "/pregunta").permitAll() // Permitir acceso libre a estos endpoints
-                        .requestMatchers("/usuarios/**").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
+                        .requestMatchers("/usuarios/**", "/estadisticasProveedores", "/visualizaciones", "/proveedoresPorCategoria").hasRole("ADMIN") // Solo ADMIN puede acceder a desactivar usuarios
                         .requestMatchers("/publicar/**", "/editar-publicacion/**", "/borrar-publicacion/**", "/publicaciones","/nuevoProveedor","/editarEstado/**").hasRole("ADMIN") // Solo ADMIN puede publicar, editar y borrar publicaciones
                         .requestMatchers("/publicaciones/**", "/buscar/**").permitAll() // Permitir acceso a obtener publicaciones y buscar por ID a todos
-                        .requestMatchers("/crearProveedor/**", "/editarProveedor/**", "misProveedores/**" ).hasRole("USUARIO")
-                        .requestMatchers("/buscarPorCategoria/**", "/mostrarProveedorActivo","/mostrarTodo","/buscarPorId/**", "/proveedoresCercanos").permitAll()
-                        .requestMatchers("/categorias/**", "/ubicacion/**").permitAll()
+                        .requestMatchers( "/editarProveedor/**", "misProveedores/**","/eliminarImagen/**","/actualizar/**","/crearProveedor/**").hasRole("USUARIO")
+                        .requestMatchers("/buscarPorCategoria/**", "/mostrarProveedorActivo", "/mostrarTodo", "/buscarPorId/**", "/proveedoresCercanos").permitAll()
+                        .requestMatchers("/categorias/**", "/ubicacion/**","incrementarVisualizaciones/**").permitAll()
                         .requestMatchers("/error").anonymous() // Permitir acceso anónimo a /error
                         .anyRequest().authenticated() // Asegura que todas las demás solicitudes estén autenticadas
                 )
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

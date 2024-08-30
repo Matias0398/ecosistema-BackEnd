@@ -11,6 +11,7 @@ import com.semillero.ecosistema.servicio.CategoriaServicioImpl;
 
 @RestController
 public class CategoriaControlador {
+	
 	@Autowired
 	private CategoriaServicioImpl categoriaServicioImpl;
 	

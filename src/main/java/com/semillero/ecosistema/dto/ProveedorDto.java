@@ -1,5 +1,10 @@
 package com.semillero.ecosistema.dto;
 
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,20 +26,29 @@ public class ProveedorDto {
 
     private Long id;
 
+    @NotBlank(message = "El nombre no puede estar en blanco")
     private String nombre;
 
+    @NotBlank(message = "La descripción no puede estar en blanco")
+    @Size(max = 300, message = "La descripcion no puede tener mas de 300 caracteres")
     private String descripcion;
-    
+
+    @NotBlank(message = "El tipo de proveedor no puede estar en blanco")
+    @Size(max=50,message="No puede tener mas de 50 caracteres")
     private String tipoProveedor;
 
+    @NotBlank(message = "El contacto no puede estar en blanco")
     private String telefono;
 
+    @NotBlank(message = "El email no puede estar en blanco")
+    @Email
     private String email;
 
     private String facebook;
 
     private String instagram;
 
+    @NotBlank(message = "La ciudad no puede estar en blanco")
     private String ciudad;
 
     private EstadoProveedorDTO estado;
@@ -50,5 +64,6 @@ public class ProveedorDto {
     private String feedback;
 
     private boolean deleted = false;
+
 
 }
