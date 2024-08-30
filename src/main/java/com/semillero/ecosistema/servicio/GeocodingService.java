@@ -8,7 +8,7 @@ import com.opencagedata.jopencage.model.JOpenCageResponse;
 
 @Service
 public class GeocodingService {
-	private String apiKey = "04a3964a4b7d41a68aeb99ab2ea205a5";
+	private String apiKey;
 	
 	private JOpenCageGeocoder jOpenCageGeocoder = new JOpenCageGeocoder(apiKey);
 	
