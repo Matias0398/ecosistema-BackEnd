@@ -17,8 +17,8 @@ public class UsuarioServicioImpl  {
 	private IUsuarioRepositorio usuarioRepositorio;
 
 	@Transactional
-	public Usuario guardar(Usuario usuario) {
-		return usuarioRepositorio.save(usuario);
+	public void guardar(Usuario usuario) {
+		usuarioRepositorio.save(usuario);
 	}
 
 	@Transactional
@@ -40,7 +40,7 @@ public class UsuarioServicioImpl  {
 	public Usuario buscarPorId(Long id) {
 		
 		Optional<Usuario> opc=usuarioRepositorio.findById(id);
-		return  opc.orElse(null);
+		return  opc.orElseThrow(() -> new RuntimeException("No se encontro el usuario con el id: "+id));
 	}
 	
 	public Usuario authenticateUser(String email) {

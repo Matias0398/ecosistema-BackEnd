@@ -22,5 +22,5 @@ public class PublicacionDto {
 	private boolean deleted = false;
 	private Date fechaDeCreacion;
 	private Usuario usuarioCreador;
-	private int cantidadDeVisualizaciones = 0;
+
 }
