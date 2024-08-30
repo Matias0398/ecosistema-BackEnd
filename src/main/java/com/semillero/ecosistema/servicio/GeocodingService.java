@@ -10,7 +10,7 @@ import com.opencagedata.jopencage.model.JOpenCageResponse;
 
 @Service
 public class GeocodingService {
-
+  
 	@Value("${geocoding.api.key}")
 	private String apiKey;
 
