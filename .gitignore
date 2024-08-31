@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Eclipse IDE ###
+bin/
+
+### Variables de entorno ###
+.env
